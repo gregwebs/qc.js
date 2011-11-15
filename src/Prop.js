@@ -105,7 +105,7 @@ define([
           testCase = new Case(args);
           try {
               this.body.apply(this, [testCase].concat(args));
-              stats.incPass();
+              stats.incrementPass();
           }
           catch (e) {
               if (e === "AssertFailed") {
@@ -117,7 +117,7 @@ define([
                   return new Fail(this, stats, args, shrinkedArgs,
                                   testCase.tags, dist);
               } else if (e === "InvalidCase") {
-                  stats.incInvalid();
+                  stats.incrementInvalid();
               } else {
                   throw (e);
               }
