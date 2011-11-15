@@ -98,8 +98,8 @@ define([
                   listener.done();
                   return;
               }
-              var currentProp = allProps[i],
-                  result = currentProp.run(config);
+              var currentProp = allProps[i];
+              var result = currentProp.run(config);
               listener.noteResult(result);
               i += 1;
               setTimeout(once, 0);
