@@ -34,20 +34,14 @@ define([
       this.collected = null;
   }
 
-  /**
-   */
   Stats.prototype.incrementInvalid = function () {
       this.invalid += 1;
   };
 
-  /**
-   */
   Stats.prototype.incrementPass = function () {
       this.pass += 1;
   };
 
-  /**
-   */
   Stats.prototype.addTags = function (ts) {
       var i, j, tag, found;
 
@@ -66,8 +60,6 @@ define([
       }
   };
 
-  /**
-   */
   Stats.prototype.newResult = function (prop) {
       if (this.pass > 0) {
           return new Pass(prop, this);
