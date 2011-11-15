@@ -28,7 +28,7 @@ define([
           shrunkArgs = [];
           for (i = 0; i < failedArgs.length; i++) {
               shrunkArgs = shrunkArgs.concat(
-                  prop.generateshrunkArgs(size, failedArgs[i]));
+                  prop.generateShrunkArgs(size, failedArgs[i]));
           }
 
           if (shrunkArgs.length === 0) {

@@ -35,30 +35,30 @@ define([
   /**
    * @private
    */
-  Prop.prototype.generateShrinkedArgs = function (size, args) {
-      // create shrinked args for each argument
-      var i, idxs, tmp, gen, countShrinked = 0, shrinked = [], newArgs = [];
+  Prop.prototype.generateShrunkArgs = function (size, args) {
+      // create shrunk args for each argument
+      var i, idxs, tmp, gen, countShrunk = 0, shrunk = [], newArgs = [];
 
       for (i = 0; i < this.gens.length; i++) {
           gen = this.gens[i];
           if ((gen instanceof Function) || gen.shrink === undefined ||
              gen.shrink === null || !(gen.shrink instanceof Function))
           {
-              shrinked.push([args[i]]);
+              shrunk.push([args[i]]);
           } else {
               tmp = gen.shrink(size, args[i]);
               if (tmp === undefined ||
                   (tmp instanceof Array && tmp.length === 0))
               {
-                  shrinked.push([args[i]]);
+                  shrunk.push([args[i]]);
               } else {
-                  countShrinked++;
-                  shrinked.push(tmp);
+                  countShrunk++;
+                  shrunk.push(tmp);
               }
           }
       }
 
-      if (countShrinked === 0) {
+      if (countShrunk === 0) {
           return [];
       }
 
@@ -68,18 +68,18 @@ define([
           idxs[i] = 0;
       }
 
-      // create list of shrinked arguments:
-      while (idxs[0] < shrinked[0].length) {
-          tmp = new Array(shrinked.length);
-          for (i = 0; i < shrinked.length; i++) {
-              tmp[i] = shrinked[i][idxs[i]];
+      // create list of shrunk arguments:
+      while (idxs[0] < shrunk[0].length) {
+          tmp = new Array(shrunk.length);
+          for (i = 0; i < shrunk.length; i++) {
+              tmp[i] = shrunk[i][idxs[i]];
           }
           newArgs.push(tmp);
 
           // adjust all indices
           while (i-- > 0) {
               idxs[i] += 1;
-              if (i !== 0 && idxs[i] >= shrinked[i].length) {
+              if (i !== 0 && idxs[i] >= shrunk[i].length) {
                   idxs[i] = 0;
               } else {
                   break;
@@ -97,7 +97,7 @@ define([
    * @return depending on test result a Pass, Fail or Invalid object
    */
   Prop.prototype.run = function (config) {
-      var args, testCase, dist, shrinkedArgs,
+      var args, testCase, dist, shrunkArgs,
           stats = new Stats(), size = 0, collected = [];
 
       while (config.needsWork(stats)) {
@@ -113,8 +113,8 @@ define([
                           testCase.collected.length === 0 ?  null :
                               new Distribution(testCase.collected);
 
-                  shrinkedArgs = qs.shrinkLoop(config, this, size, args);
-                  return new Fail(this, stats, args, shrinkedArgs,
+                  shrunkArgs = qs.shrinkLoop(config, this, size, args);
+                  return new Fail(this, stats, args, shrunkArgs,
                                   testCase.tags, dist);
               } else if (e === "InvalidCase") {
                   stats.incrementInvalid();
