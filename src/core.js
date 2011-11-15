@@ -1,6 +1,6 @@
 define([
-  'Distribution'
-], function(Distribution) {
+  'Distribution', 'Case'
+], function(Distribution, Case) {
 
   var exports = {};
   /**

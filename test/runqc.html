@@ -28,8 +28,10 @@
                     c.assert(z.toString() == y.concat(x).toString());
                 });
         var config = new qc.Config(10, 100);
+        require(['../test/selfchecks'], function(){
+          qc.runAllProps(config, new qc.FBCListener());
+        });
 
-        qc.runAllProps(config, new qc.FBCListener());
 //        console.log('Bikeshed version:', bs.version);
 //
 //        // demo code goes here.

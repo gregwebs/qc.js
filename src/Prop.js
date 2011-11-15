@@ -1,7 +1,7 @@
 define([
   'core',
-  'Distribution', 'Stats', 'Case'
-],function(qs, Distribution, Stats, Case) {
+  'Case', 'Distribution', 'Fail', 'Stats'
+],function(qs, Case, Distribution, Fail, Stats) {
   /**
    * Creates a new Property with given argument generators and a testing
    * function. For each generator in the gens array a value is generated,
@@ -113,7 +113,7 @@ define([
                           testCase.collected.length === 0 ?  null :
                               new Distribution(testCase.collected);
 
-                  shrinkedArgs = shrinkLoop(config, this, size, args);
+                  shrinkedArgs = qs.shrinkLoop(config, this, size, args);
                   return new Fail(this, stats, args, shrinkedArgs,
                                   testCase.tags, dist);
               } else if (e === "InvalidCase") {

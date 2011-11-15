@@ -1,7 +1,7 @@
 define(function() {
   var exports = {};
   
-  exports.randWhole = function(top) {
+  var randWhole = exports.randWhole = function(top) {
       return Math.floor(Math.random() * top);
   }
 

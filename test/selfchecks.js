@@ -2,109 +2,114 @@
 
 // Some self checks for our generators.
 
-declare("randWhole", [justSize],
-        function(c, a) {
-            var result = randWhole(a);
-            c.noteArg(result);
-            c.assert(result < a || result == 0);
-        });
+define([
+  'qc'
+],function(qc){
 
-declare("randWhole nonzero", [justSize],
-        function(c, a) {
-            c.guard(a > 10);
-            var result = randWhole(a);
-            c.noteArg(result);
-            c.guard(result > 0);
-        });
+  qc.declare("randWhole", [qc.justSize],
+          function(c, a) {
+              var result = qc.randWhole(a);
+              c.noteArg(result);
+              c.assert(result < a || result == 0);
+          });
 
-declare("randWhole zero result", [justSize],
-        function(c, a) {
-            var result = randWhole(a);
-            c.noteArg(result);
-            c.guard(result == 0);
-        });
+  qc.declare("randWhole nonzero", [qc.justSize],
+          function(c, a) {
+              c.guard(a > 10);
+              var result = qc.randWhole(a);
+              c.noteArg(result);
+              c.guard(result > 0);
+          });
 
-declare("randInt show positive", [arbWholeNum],
-        function(c, a) {
-            //console.log('input: ' + a);
-            var result = randInt(a);
-            c.noteArg(result);
-            c.guard(result > 0);
-        });
+  qc.declare("randWhole zero result", [qc.justSize],
+          function(c, a) {
+              var result = qc.randWhole(a);
+              c.noteArg(result);
+              c.guard(result == 0);
+          });
 
-declare("randInt show negative", [arbWholeNum],
-        function(c, a) {
-            var result = randInt(a);
-            c.noteArg(result);
-            c.guard(result < 0);
-        });
+  qc.declare("randInt show positive", [qc.arbWholeNum],
+          function(c, a) {
+              //console.log('input: ' + a);
+              var result = qc.randInt(a);
+              c.noteArg(result);
+              c.guard(result > 0);
+          });
 
-declare("randInt zero result", [arbWholeNum],
-        function(c, a) {
-            c.guard(a > 0);
-            var result = randInt(a);
-            c.noteArg(result);
-            c.guard(result == 0);
-        });
+  qc.declare("randInt show negative", [qc.arbWholeNum],
+          function(c, a) {
+              var result = qc.randInt(a);
+              c.noteArg(result);
+              c.guard(result < 0);
+          });
 
-declare("randRange between", [arbInt, arbInt],
-        function(c, a, b) {
-            c.guard(a < b);
-            var result = randRange(a, b);
-            c.noteArg(result);
-            c.assert(a <= result);
-            c.assert(b > result);
-        });
+  qc.declare("randInt zero result", [qc.arbWholeNum],
+          function(c, a) {
+              c.guard(a > 0);
+              var result = qc.randInt(a);
+              c.noteArg(result);
+              c.guard(result == 0);
+          });
 
-declare("randRange between backwards", [arbInt, arbInt],
-        function(c, a, b) {
-            c.guard(b < a);
-            var result = randRange(a, b);
-            c.noteArg(result);
-            c.assert(b <= result);
-            c.assert(a > result);
-        });
+  qc.declare("randRange between", [qc.arbInt, qc.arbInt],
+          function(c, a, b) {
+              c.guard(a < b);
+              var result = qc.randRange(a, b);
+              c.noteArg(result);
+              c.assert(a <= result);
+              c.assert(b > result);
+          });
 
-declare("randRange equal", [arbInt],
-        function(c, a, b) {
-            var result = randRange(a, a);
-            c.assert(a == result);
-        });
+  qc.declare("randRange between backwards", [qc.arbInt, qc.arbInt],
+          function(c, a, b) {
+              c.guard(b < a);
+              var result = qc.randRange(a, b);
+              c.noteArg(result);
+              c.assert(b <= result);
+              c.assert(a > result);
+          });
 
-declare("randFloatUnit", [],
-	function(c) {
-	    var result = randFloatUnit();
-	    c.noteArg(result);
-	    c.assert(result >= 0);
-	    c.assert(result < 1);
-	});
+  qc.declare("randRange equal", [qc.arbInt],
+          function(c, a, b) {
+              var result = qc.randRange(a, a);
+              c.assert(a == result);
+          });
 
-declare("collectTest", [arbArray(arbInt)],
-    function(c,a) {
-        c.classify(a.length == 0, "empty array");
-        c.collect(a.length);
+  qc.declare("randFloatUnit", [],
+    function(c) {
+        var result = qc.randFloatUnit();
+        c.noteArg(result);
+        c.assert(result >= 0);
+        c.assert(result < 1);
     });
 
-var testArr = [1,2,0,1,0];
-var testArb = {
-    arb: function(){
-        return testArr;
-    },
-    shrink: function(s,a) {
-        //print('input: ' + a);
-        var r = a.slice(1);
-        //print('ret: ' + r);
-        return r.length == 0 ? [] : [r];
-    }
-}
+  qc.declare("collectTest", [qc.arbArray(qc.arbInt)],
+      function(c,a) {
+          c.classify(a.length == 0, "empty array");
+          c.collect(a.length);
+      });
 
-declare("shrinkTest... must FAIL", [testArb],
-        function(c){
-            c.assert(false);
-        });
+  var testArr = [1,2,0,1,0];
+  var testArb = {
+      arb: function(){
+          return testArr;
+      },
+      shrink: function(s,a) {
+          //print('input: ' + a);
+          var r = a.slice(1);
+          //print('ret: ' + r);
+          return r.length == 0 ? [] : [r];
+      }
+  }
 
-declare("expect Exception", [arbInt],
-        expectException(function(c,i) {
-            throw("test");
-        }));
+  qc.declare("shrinkTest... must FAIL", [testArb],
+          function(c){
+              c.assert(false);
+          });
 
+  qc.declare("expect Exception", [qc.arbInt],
+          qc.expectException(function(c,i) {
+              throw("test");
+          }));
+console.log(1111)
+});
