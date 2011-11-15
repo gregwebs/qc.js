@@ -23,7 +23,7 @@ define([
       var loop, i, testCase, failedArgs = [args], shrunkArgs = [];
 
       for (loop = 0; loop < config.maxShrink; loop++) {
-          // create shrinked argument lists from failed arguments
+          // create shrunk argument lists from failed arguments
 
           shrunkArgs = [];
           for (i = 0; i < failedArgs.length; i++) {
@@ -35,7 +35,7 @@ define([
               return failedArgs.length === 0 ? null : failedArgs[0];
           }
 
-          // create new failed arguments from shrinked ones by running the
+          // create new failed arguments from shrunk ones by running the
           // property
           failedArgs = [];
           for (i = 0; i < shrunkArgs.length; i++) {
