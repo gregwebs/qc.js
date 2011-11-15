@@ -35,21 +35,18 @@ define([
   }
 
   /**
-   * @private
    */
-  Stats.prototype.incInvalid = function () {
+  Stats.prototype.incrementInvalid = function () {
       this.invalid += 1;
   };
 
   /**
-   * @private
    */
-  Stats.prototype.incPass = function () {
+  Stats.prototype.incrementPass = function () {
       this.pass += 1;
   };
 
   /**
-   * @private
    */
   Stats.prototype.addTags = function (ts) {
       var i, j, tag, found;
@@ -70,7 +67,6 @@ define([
   };
 
   /**
-   * @private
    */
   Stats.prototype.newResult = function (prop) {
       if (this.pass > 0) {
