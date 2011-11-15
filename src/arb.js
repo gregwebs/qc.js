@@ -1,13 +1,13 @@
 define([
-  'core', 'rand',
+  'core', 'rand', 'util',
   'Distribution'
-], function(qs, rand, Distribution) {
+], function(qs, rand, util, Distribution) {
   var exports = {};
   exports.arbChoose = function(/** generators... */) {
       var d = Distribution.uniform(arguments);
       return {
           arb: function (size) {
-                  return genvalue(d.pick(), size);
+                  return util.generateValue(d.pick(), size);
               },
           shrink: null
       };
@@ -127,7 +127,7 @@ define([
       var d = new Distribution([[10, arbNull], [90, otherGen]]);
       return {
           arb: function (size) {
-                  return genvalue(d.pick(), size);
+                  return util.generateValue(d.pick(), size);
               },
           shrink: function (size, a) {
               if (a === null) {
@@ -178,7 +178,7 @@ define([
           var i, list = [],
               listSize = rand.randWhole(size);
           for (i = 0; i < listSize; i += 1) {
-              list.push(qs.genvalue(innerGen, size));
+              list.push(util.generateValue(innerGen, size));
           }
           return list;
       }
@@ -201,7 +201,7 @@ define([
   var arbMod = exports.arbMod = function(a, fn) {
       return {
           arb: function (size) {
-              return fn(genvalue(a, size));
+              return fn(util.generateValue(a, size));
           }
       };
   }
@@ -228,7 +228,7 @@ define([
       var a = arbArray(arbRange(32, 255));
 
       this.arb = function (size) {
-          var tmp = genvalue(a, size);
+          var tmp = util.generateValue(a, size);
           return String.fromCharCode.apply(String, tmp);
       };
 
@@ -260,7 +260,7 @@ define([
       var d = new Distribution([[10, arbUndef], [90, opt]]);
       return {
           arb: function (size) {
-              return genvalue(d.pick(), size);
+              return util.generateValue(d.pick(), size);
           },
           shrink: function (size, a) {
               return a === undefined || a === null ?
