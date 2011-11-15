@@ -111,5 +111,4 @@ define([
           qc.expectException(function(c,i) {
               throw("test");
           }));
-console.log(1111)
 });
