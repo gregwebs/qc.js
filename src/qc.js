@@ -4,8 +4,8 @@
 
 define([
   'arb', 'core', 'rand',
-  'Case', 'Config', 'ConsoleListener', 'Distribution', 'Fail', 'FBCListener',
-  'Invalid', 'Pass', 'Prop', 'RhinoListener', 'Stats'
+  'Case', 'Config', 'Distribution', 'Fail',
+  'Invalid', 'Pass', 'Prop', 'Stats'
 ], function() {
 
   var exports = {};
