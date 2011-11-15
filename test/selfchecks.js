@@ -18,7 +18,10 @@ define([
               c.assert(result < a || result == 0);
           });
 
-  qc.declare("randWhole nonzero", [qc.justSize],
+  // Some arbitrary guard, to only allow numbers above 10 to be valid tests.
+  // And numbers below zero leads to invalid result, so failures seem
+  // not possible.
+  qc.declare("randWhole nonzero, larger than 10", [qc.justSize],
           function(c, a) {
               c.guard(a > 10);
               var result = qc.randWhole(a);
@@ -35,7 +38,6 @@ define([
 
   qc.declare("randInt show positive", [qc.arbWholeNum],
           function(c, a) {
-              //console.log('input: ' + a);
               var result = qc.randInt(a);
               c.noteArg(result);
               c.guard(result > 0);
@@ -93,7 +95,7 @@ define([
           c.classify(a.length == 0, "empty array");
           c.collect(a.length);
       });
-
+/*
   var testArr = [1,2,0,1,0];
   var testArb = {
       arb: function(){
@@ -116,4 +118,5 @@ define([
           qc.expectException(function(c,i) {
               throw("test");
           }));
+//*/
 });
