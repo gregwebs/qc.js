@@ -1,7 +1,7 @@
 define([
-  'core',
+  'core', 'util',
   'Case', 'Distribution', 'Fail', 'Stats'
-],function(qs, Case, Distribution, Fail, Stats) {
+],function(qs, util, Case, Distribution, Fail, Stats) {
   /**
    * Creates a new Property with given argument generators and a testing
    * function. For each generator in the gens array a value is generated,
@@ -27,7 +27,7 @@ define([
 
       for (i = 0; i < this.gens.length; i += 1) {
           gen = this.gens[i];
-          args.push(qs.genvalue(gen, size));
+          args.push(util.generateValue(gen, size));
       }
       return args;
   };
