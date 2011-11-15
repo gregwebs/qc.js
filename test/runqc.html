@@ -14,22 +14,23 @@
   </head>
   <body>
     <div>There should be a Firebug console present with results below.</div>
+    <div id=testresults></div>
     <script type="text/javascript">
       require(['qc'], function(qc){
 
         var arbWholeNumList = qc.arbArray(qc.arbWholeNum);
 
-        qc.declare("reverse", [arbWholeNumList, arbWholeNumList],
-                function(c, x, y) {
-                    var z = x.concat(y);
-                    x.reverse();
-                    y.reverse();
-                    z.reverse();
-                    c.assert(z.toString() == y.concat(x).toString());
-                });
+//        qc.declare("reverse", [arbWholeNumList, arbWholeNumList],
+//                function(c, x, y) {
+//                    var z = x.concat(y);
+//                    x.reverse();
+//                    y.reverse();
+//                    z.reverse();
+//                    c.assert(z.toString() == y.concat(x).toString());
+//                });
         var config = new qc.Config(10, 100);
-        require(['../test/selfchecks'], function(){
-          qc.runAllProps(config, new qc.FBCListener());
+        require(['../test/selfchecks', 'HtmlListener'], function(_, HtmlListener){
+          qc.runAllProps(config, new HtmlListener('testresults'));
         });
 
 //        console.log('Bikeshed version:', bs.version);
