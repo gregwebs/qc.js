@@ -133,7 +133,7 @@ define([
               if (a === null) {
                   return [];
               } else {
-                  return [null].concat(genshrinked(otherGen, size, a));
+                  return [null].concat(util.generateShrunkValues(otherGen, size, a));
               }
           }
       };
@@ -238,7 +238,7 @@ define([
               tmp[i] = str.charCodeAt(i);
           }
 
-          tmp = genshrinked(a, size, tmp);
+          tmp = util.generateShrunkValues(a, size, tmp);
           ret = [];
           for (i = 0; i < tmp.length; i++) {
               ret.push(String.fromCharCode.apply(String, tmp[i]));
@@ -265,7 +265,7 @@ define([
           shrink: function (size, a) {
               return a === undefined || a === null ?
                          [] :
-                         genshrinked(opt, size, a);
+                         util.generateShrunkValues(opt, size, a);
           }
       };
   }
