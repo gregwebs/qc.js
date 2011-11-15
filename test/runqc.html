@@ -1,29 +1,40 @@
 <!DOCTYPE html>
-<title>Demo of qc</title>
-<script src="../src/qc.js"></script>
-<script src="../src/Stats.js"></script>
-<script src="../src/Fail.js"></script>
-<script src="../src/Pass.js"></script>
-<script src="../src/Distribution.js"></script>
-<script src="../src/Prop.js"></script>
-<script src="../src/Case.js"></script>
-<script src="../src/Config.js"></script>
-<script src="../src/ConsoleListener.js"></script>
-<script src="../src/FBCListener.js"></script>
-<script src="../src/RhinoListener.js"></script>
-<script src="../src/rand.js"></script>
-<script src="../src/arb.js"></script>
+<html>
+	<head>
+    <title>Demo of qc</title>
+    <script>
+      var require = {
+        baseUrl: '../src/'
+      };
+    </script>
+    <script type="text/javascript" src="../lib/requirejs/require.js"></script>
 
-<script src="selfchecks.js"></script>
-<script src="qcdemo.js"></script>
+    <!--<script src="selfchecks.js"></script>-->
+    <!--<script src="qcdemo.js"></script>-->
+  </head>
+  <body>
+    <div>There should be a Firebug console present with results below.</div>
+    <script type="text/javascript">
+      require(['qc'], function(qc){
 
-<!--<script type='text/javascript'-->
-        <!--src='http://getfirebug.com/releases/lite/1.2/firebug-lite-compressed.js'></script>-->
+        var arbWholeNumList = qc.arbArray(qc.arbWholeNum);
 
-<script type="text/javascript">
-window.onload = function() { runAllProps(config, new FBCListener()); };
+        qc.declare("reverse", [arbWholeNumList, arbWholeNumList],
+                function(c, x, y) {
+                    var z = x.concat(y);
+                    x.reverse();
+                    y.reverse();
+                    z.reverse();
+                    c.assert(z.toString() == y.concat(x).toString());
+                });
+        var config = new qc.Config(10, 100);
 
-</script>
-<div>
-There should be a Firebug console present with results below.
-</div>
+        qc.runAllProps(config, new qc.FBCListener());
+//        console.log('Bikeshed version:', bs.version);
+//
+//        // demo code goes here.
+//        var myStage = bs.createStage('demo', 800, 600);
+      });
+    </script>
+  </body>
+</html>

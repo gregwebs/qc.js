@@ -2,217 +2,43 @@
 
 // Tiny javascript quickcheck port.
 
-/**
- * Array of all declared/registered properties
- */
-var allProps = [];
+define([
+  'arb', 'core', 'rand',
+  'Case', 'Config', 'ConsoleListener', 'Distribution', 'Fail', 'FBCListener',
+  'Invalid', 'Pass', 'Prop', 'RhinoListener', 'Stats'
+], function() {
 
-
-/**
- * deletes all declared properties
- */
-function resetProps() {
-    allProps = [];
-}
-
-/**
- * draws a new value from a generator. 
- * A generator is either a function accepting a seed argument or an object
- * with a method 'arb' accepting a seed argument.
- *
- * @param gen Function or Generator object with method 'arb'
- * @param {Number} size seed argument
- *
- * @return new generated value
- */
-function genvalue(gen, size) {
-    if (!(gen instanceof Function)) {
-        gen = gen.arb;
-    }
-    return gen(size);
-}
-
-/**
- * Uses the generators specific shrinking method to shrink a value the
- * generator created before. If the generator is a function or has no method
- * named 'shrink' or the objects field 'shrink' is set to null, no shrinking
- * will be done.  If a shrinking method is defined, this method is called with
- * the original seed and value the generator created. The shrinking method is
- * supposed to return an Array of shrinked(!) values or null,undefined,[] if 
- * no shrinked values could have been created.
- *
- * @param gen the generator object
- * @param size the initial seed used when creating a value
- * @param arg the value the generator created for testing
- *
- * @return an array of shrinked values or [] if no shrinked values were
- *         generated.
- *
- */
-function genshrinked(gen, size, arg) {
-    if (!gen || gen instanceof Function ||
-        gen.shrink === undefined || gen.shrink === null)
-    {
-        return [];
-    }
-
-    var tmp = gen.shrink(size, arg);
-    return (tmp === null || tmp === undefined) ? [] : tmp;
-}
-
-/**
- * @private
- */
-function shrinkLoop(config, prop, size, args) {
-    var loop, i, testCase, failedArgs = [args], shrinkedArgs = [];
-
-    for (loop = 0; loop < config.maxShrink; loop++) {
-        // create shrinked argument lists from failed arguments
-
-        shrinkedArgs = [];
-        for (i = 0; i < failedArgs.length; i++) {
-            shrinkedArgs = shrinkedArgs.concat(
-                prop.generateShrinkedArgs(size, failedArgs[i]));
-        }
-
-        if (shrinkedArgs.length === 0) {
-            return failedArgs.length === 0 ? null : failedArgs[0];
-        }
-
-        // create new failed arguments from shrinked ones by running the
-        // property
-        failedArgs = [];
-        for (i = 0; i < shrinkedArgs.length; i++) {
-            try {
-                testCase = new Case(shrinkedArgs[i]);
-                prop.body.apply(prop, [testCase].concat(shrinkedArgs[i]));
-            } catch (e) {
-                if (e === 'InvalidCase') {
-                } else if (e === 'AssertFailed') {
-                    if (loop === config.maxShrink - 1) {
-                        return shrinkedArgs[i];
-                    } else {
-                        failedArgs.push(shrinkedArgs[i]);
-                    }
-                } else {
-                    throw e;
-                }
-            }
-        }
-    }
-
-    return failedArgs.length === 0 ? null : failedArgs[0];
-}
-
-
-/**
- * Builds and registers a new property.
- *
- *
- * @param name the property's name
- * @param gens Array of generators (length == arity of body function). The
- *             Entry at position i will drive the i-th argument of the body
- *             function.
- * @param body the properties testing function
- *
- * @return a new registered Property object.
- */
-function declare(name, gens, body) {
-    var theProp = new Prop(name, gens, body);
-    allProps.push(theProp);
-    return theProp;
-}
-
-function runAllProps(config, listener) {
-    var once, i = 0;
-
-    if (typeof setTimeout !== 'undefined') {
-        // Use set timeout so listeners can draw in response to events.
-        once = function () {
-            if (i >= allProps.length) {
-                listener.done();
-                return;
-            }
-            var currentProp = allProps[i],
-                result = currentProp.run(config);
-            listener.noteResult(result);
-            i += 1;
-            setTimeout(once, 0);
-        };
-        once();
+  var exports = {};
+  var args = [].splice.call(arguments, 0);
+  args.map(function(arg){
+    // Add the classes to "exports".
+    if (typeof arg == 'function'){
+      exports[arg.name] = arg;
     } else {
-        for (; i < allProps.length; i++) {
-            listener.noteResult(allProps[i].run(config));
-        }
+      // Add all properties to the exports, mostly its a collection of functions.
+      for (var prop in arg){
+        exports[prop] = arg[prop];
+      }
     }
-}
+  });
 
+  /**
+   * Builds and registers a new property.
+   *
+   *
+   * @param name the property's name
+   * @param gens Array of generators (length == arity of body function). The
+   *             Entry at position i will drive the i-th argument of the body
+   *             function.
+   * @param body the properties testing function
+   *
+   * @return a new registered Property object.
+   */
+  exports.declare = function(name, gens, body) {
+      var theProp = new exports.Prop(name, gens, body);
+      exports.allProps.push(theProp);
+      return theProp;
+  }
 
-// some starter generators and support utilities.
-
-function frequency(/** functions */) {
-    var d = new Distribution(arguments);
-    return function () {
-        return d.pick();
-    };
-}
-
-function choose(/** values */) {
-    var d = Distribution.uniform(arguments);
-    return function () {
-        return d.pick();
-    };
-}
-
-
-/**
- * Passes the size 'seed' argument use to drive generators directly to the
- * property its test function.
- *
- * @constant
- */
-var justSize = {
-    arb: function (size) { 
-            return size; 
-        },
-    shrink: null
-};
-
-
-/**
- * Property test function modifier. Using this modifier, it is assumed that 
- * the testing function will throw an exception and if not the property will
- * fail.
- */
-function expectException(fn) {
-    return function (c) {
-        try {
-            fn.apply(this, arguments);
-        } catch (e) {
-            if (e === 'AssertFailed' || e === 'InvalidCase') {
-                throw e;
-            }
-            c.assert(true);
-            return;
-        }
-        c.assert(false);
-    };
-}
-
-/**
- * Property test function modifier. Instead of finishing testing when an
- * unexpected exception is thrown, the offending property is marked as failure
- * and QuickCheck will continue.
- */
-function failOnException(fn) {
-    return function (c) {
-        try {
-            fn.apply(this, arguments);
-        } catch (e) {
-            if (e === 'AssertFailed' || e === 'InvalidCase') {
-                throw e;
-            }
-            c.assert(false);
-        }
-    };
-}
+  return exports;
+});
