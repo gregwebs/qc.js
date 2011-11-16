@@ -28,14 +28,14 @@ q = qc// so i can play with it globally
 //                });
         var config = new qc.Config(100, 1000);
         require([
-          '../test/CiEnabledListener',
+          '../test/UxebuCiListener',
 //          '../test/selfchecks',
 //          '../test/random',
           '../test/generator-base',
 //          '../examples/stringSplitter',
-        ], function(CiEnabledListener){
+        ], function(UxebuCiListener){
 
-          qc.runAllProps(config, new CiEnabledListener('testresults', true));
+          qc.runAllProps(config, new UxebuCiListener('testresults', true));
         });
 
 //        console.log('Bikeshed version:', bs.version);
