@@ -16,11 +16,13 @@
     <div>There should be a Firebug console present with results below.</div>
     <div id=testresults></div>
     <script type="text/javascript">
+      var q;
       require(['qc'], function(qc){
-
-        var arbWholeNumList = qc.arbArray(qc.arbWholeNum);
-
-//        qc.declare("reverse", [arbWholeNumList, arbWholeNumList],
+q = qc
+//        var gen = qs.generator;
+//        var positiveIntegerList = gen.arrays(gen.number.positiveIntegers);
+//
+//        qc.declare("reverse", [positiveIntegerList, positiveIntegerList],
 //                function(c, x, y) {
 //                    var z = x.concat(y);
 //                    x.reverse();
@@ -29,8 +31,13 @@
 //                    c.assert(z.toString() == y.concat(x).toString());
 //                });
         var config = new qc.Config(10, 100);
-        require(['../test/selfchecks', 'HtmlListener'], function(_, HtmlListener){
-          qc.runAllProps(config, new HtmlListener('testresults'));
+        require([
+          'HtmlListener',
+//          '../test/selfchecks',
+          '../test/random',
+//          '../examples/stringSplitter',
+        ], function(HtmlListener){
+          qc.runAllProps(config, new HtmlListener('testresults', true));
         });
 
 //        console.log('Bikeshed version:', bs.version);

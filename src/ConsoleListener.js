@@ -25,14 +25,14 @@ define(function() {
    * @param result a property its test result (Pass, Invalid, Failure)
    */
   ConsoleListener.prototype.noteResult = function (result) {
-      var i, tags, tag, distr, d,
-          status_string = result.status + ": " + result.name;
+      var i, tags, tag, distr, d;
+      var statusString = result.status + ": " + result.name;
 
       if (result.status === "pass") {
           this.passed(result);
           //this.log(result.counts);
       } else {
-          this.invalid(status_string);
+          this.invalid(statusString);
           this.log(result);
       }
       if (result.status === "fail") {
