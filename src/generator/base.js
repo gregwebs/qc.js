@@ -42,7 +42,7 @@ define([
    *
    * @constant
    */
-  exports.nulls = constants(null);
+  var nulls = exports.nulls = constants(null);
 
   /**
    * Array generator. Generates array of arbitrary length with given generator.
@@ -64,6 +64,11 @@ define([
     return { arb: generator, shrink: shrinkStrategy || arrShrinkOne };
   }
 
+  exports.nonEmptyArrays = function(){
+// TODO
+    return { arb: function(){ return [1]; } }
+  }
+
   /**
    * Date value generator. Always generates a new Date object by calling
    * 'new Date()'.
@@ -76,18 +81,9 @@ define([
       }
   };
 
-  exports.range = function(a, b) {
-      var min = Math.min(a, b),
-          max = Math.max(a, b);
-
-      return function (size) {
-          return Math.floor(Math.random() * (max - min)) + min;
-      };
-  }
-
   exports.nullOr = function(otherGen) {
       //return arbSelect(otherGen, arbNull);
-      var d = new Distribution([[10, arbNull], [90, otherGen]]);
+      var d = new Distribution([[10, nulls], [90, otherGen]]);
       return {
           arb: function (size) {
                   return util.generateValue(d.pick(), size);
@@ -147,7 +143,7 @@ define([
    *
    * @constant
    */
-  exports.undefineds = constants(undefined);
+  var undefineds = exports.undefineds = constants(undefined);
 
   exports.undefinedOr = function(opt) {
       var d = new Distribution([[10, undefineds], [90, opt]]);
