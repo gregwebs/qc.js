@@ -12,19 +12,16 @@ define([
     }
   );
 
-  qc.declare("random range", [qc.randRange],
+  qc.declare("random positive integer", [random.getPositiveInteger],
     function(c, a) {
-      c.assert(!isNaN(a) && parseInt(a)===a);
+      c.assert(!isNaN(a) && parseInt(a)===a && a >= 0);
     }
   );
 
-
-
-
-//  qc.declare("randRange", [qc.randRange],
-//    function(c, a) {
-//      c.assert(!isNaN(a) && parseInt(a)===a);
-//    }
-//  );
+  qc.declare("random float", [random.getFloat],
+    function(c, a) {
+      c.assert(!isNaN(a));
+    }
+  );
 //*/
 });
