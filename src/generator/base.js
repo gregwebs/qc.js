@@ -7,7 +7,7 @@ define([
   /**
    * Return one of the results of any given generator.
    */
-  var choose = exports.choose = function(/** generators... */) {
+  exports.choose = function(/** generators... */) {
     var d = Distribution.uniform(arguments);
     return {
       arb: function (size) {
@@ -53,15 +53,14 @@ define([
    *        'arrShrinkOne'
    */
   exports.arrays = function(innerGen, shrinkStrategy) {
-    function generator(size) {
-      var i, list = [],
-        listSize = random.getPositiveInteger(size);
+    var generator = function(size) {
+      var i, list = [];
+      var listSize = random.getPositiveInteger(size);
       for (i = 0; i < listSize; i += 1) {
         list.push(util.generateValue(innerGen, size));
       }
       return list;
     }
-
     return { arb: generator, shrink: shrinkStrategy || arrShrinkOne };
   }
 
@@ -112,7 +111,7 @@ define([
       if (!arr || arr.length === 0) return [];
       if (arr.length === 1) return [[]];
 
-      function copyAllBut(idx) {
+      var copyAllBut = function(idx) {
           var i, tmp = new Array(arr.length - 1);
           for (i = 0; i < arr.length; i++) {
               if (i === idx) {
