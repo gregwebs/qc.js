@@ -18,10 +18,10 @@ define(function() {
    * @return new generated value
    */
   exports.generateValue = function(gen, size) {
-      if (!(gen instanceof Function)) {
-          gen = gen.arb;
-      }
-      return gen(size);
+    if (!(gen instanceof Function)) {
+      gen = gen.arb;
+    }
+    return gen(size);
   }
 
   /**
@@ -42,14 +42,14 @@ define(function() {
    *
    */
   exports.generateShrunkValues = function(gen, size, arg) {
-      if (!gen || gen instanceof Function ||
-          gen.shrink === undefined || gen.shrink === null)
-      {
-          return [];
-      }
+    if (!gen || gen instanceof Function ||
+      gen.shrink === undefined || gen.shrink === null)
+    {
+      return [];
+    }
 
-      var tmp = gen.shrink(size, arg);
-      return (tmp === null || tmp === undefined) ? [] : tmp;
+    var tmp = gen.shrink(size, arg);
+    return (tmp === null || tmp === undefined) ? [] : tmp;
   }
 
   return exports;
