@@ -14,10 +14,6 @@ define(function() {
       return getPositiveInteger(2 * top) - top;
   }
 
-  exports.getRange = function(a, b) {
-      return getPositiveInteger(b - a) + a;
-  }
-
   exports.getFloat = function() {
       return Math.random();
   }
