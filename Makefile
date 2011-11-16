@@ -80,4 +80,4 @@ mktemp:
 clean:
 	rm -rf ${TEMP_DIR}
 
-ci-run: clean jshint coverage-phantom test-phantom test-webdriver
+ci-run: clean jshint coverage-phantom test-phantom
