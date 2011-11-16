@@ -35,9 +35,7 @@ define([
    *
    * @constant
    */
-  exports.booleans = {
-    arb: choose(false, true)
-  };
+  exports.booleans = constants(false, true);
 
   /**
    * Null generator. Always generates 'null'.
