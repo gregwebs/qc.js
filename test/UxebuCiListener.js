@@ -24,7 +24,7 @@ define([
 
   UxebuCiListener.prototype.done = function (str) {
     HtmlListener.prototype.done.apply(this, arguments); // Call parent method.
-    window.JUnitTestResults = {'filename':'qc.js', 'text':generateJunitTestResults()};
+    window.JUnitTestResults = [{'filename':'qc.js', 'text':generateJunitTestResults()}];
     window.testsComplete = true;
   };
 
