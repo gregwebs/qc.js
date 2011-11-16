@@ -7,22 +7,22 @@ define([
    * the test results passed.
    */
   var testResults = { passed: [], failure: [] };
-  var CiEnabledListener = function(){
+  var UxebuCiListener = function(){
     HtmlListener.apply(this, arguments); // Call the parent constructor.
   };
-  CiEnabledListener.prototype = new HtmlListener();
+  UxebuCiListener.prototype = new HtmlListener();
 
-  CiEnabledListener.prototype.passed = function (str) {
+  UxebuCiListener.prototype.passed = function (str) {
     HtmlListener.prototype.passed.apply(this, arguments); // Call parent method.
     testResults.passed.push(str);
   }
   
-  CiEnabledListener.prototype.failure = function (str) {
+  UxebuCiListener.prototype.failure = function (str) {
     HtmlListener.prototype.failure.apply(this, arguments); // Call parent method.
     testResults.failure.push(str);
   }
 
-  CiEnabledListener.prototype.done = function (str) {
+  UxebuCiListener.prototype.done = function (str) {
     HtmlListener.prototype.done.apply(this, arguments); // Call parent method.
     window.JUnitTestResults = generateJunitTestResults();
     window.testsComplete = true;
@@ -52,5 +52,5 @@ define([
       '</testsuites>';
   }
 
-  return CiEnabledListener;
+  return UxebuCiListener;
 });
