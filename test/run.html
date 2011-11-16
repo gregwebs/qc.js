@@ -8,17 +8,13 @@
       };
     </script>
     <script type="text/javascript" src="../lib/requirejs/require.js"></script>
-
-    <!--<script src="selfchecks.js"></script>-->
-    <!--<script src="qcdemo.js"></script>-->
   </head>
   <body>
     <div>There should be a Firebug console present with results below.</div>
     <div id=testresults></div>
     <script type="text/javascript">
-      var q;
       require(['qc'], function(qc){
-q = qc
+q = qc// so i can play with it globally
 //        var gen = qs.generator;
 //        var positiveIntegerList = gen.arrays(gen.number.positiveIntegers);
 //
@@ -30,7 +26,7 @@ q = qc
 //                    z.reverse();
 //                    c.assert(z.toString() == y.concat(x).toString());
 //                });
-        var config = new qc.Config(10, 100);
+        var config = new qc.Config(100, 1000);
         require([
           'HtmlListener',
 //          '../test/selfchecks',
