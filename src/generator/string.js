@@ -1,6 +1,6 @@
 define([
-  'generator/base', 'generator/number'
-],function(base, number) {
+  'generator/base', 'generator/number', 'util'
+],function(base, number, util) {
   var exports = {};
 
   /**
@@ -10,7 +10,7 @@ define([
    *
    * @constant
    */
-  exports.strings = new function () {
+  exports.strings = new function() {
       var a = base.arrays(number.range(32, 255));
 
       this.arb = function (size) {
@@ -48,5 +48,6 @@ define([
 
   exports.nonEmptys = {
   };
-  
+
+  return exports;
 });
