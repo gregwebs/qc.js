@@ -37,7 +37,7 @@ define([
    * @constant
    */
   exports.positiveIntegers = {
-      arb: random.positiveInteger,
+      arb: random.getPositiveInteger,
       shrink: function (size, x) {
           var tmp = x, ret = [];
           while (true) {
@@ -67,7 +67,7 @@ define([
    * @constant
    */
   exports.floats = {
-      arb: random.floats,
+      arb: random.getFloat,
       shrink: function (size, x) {
           var tmp, ret = [];
 
