@@ -32,7 +32,7 @@ define(function() {
   }
 
   /**
-   * @private
+   * Normalize all probablities to sum up to 1.
    */
   Distribution.prototype.normalize = function () {
       var sum = 0, i;
@@ -45,12 +45,12 @@ define(function() {
   };
 
   /**
-   * finds the probability of a given value in the distribution.
+   * Get the probability of a given value in the distribution.
    *
    * @param x any value to find probability for
    * @return the probability of x in the distribution
    */
-  Distribution.prototype.probability = function (x) {
+  Distribution.prototype.getProbability = function (x) {
       for (var i = 0; i < this.data.length; i++) {
           if (this.data[i][1] === x) {
               return this.data[i][0];
