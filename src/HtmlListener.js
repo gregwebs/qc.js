@@ -20,13 +20,13 @@ define([
     }
   }
   HtmlListener.prototype.invalid = function (str) {
-    this._domNode.innerHTML += str.status + ': ' + str.name + '<br>';
+    this._domNode.innerHTML += str;
   };
   HtmlListener.prototype.failure = function (str) {
-    this._domNode.innerHTML += str.status + ': ' + str.name + '<br>';
+    this._domNode.innerHTML += str + '<br>';
   };
   HtmlListener.prototype.log = function (str) {
-    console.log(str);
+    this._domNode.innerHTML += str;
   }
   HtmlListener.prototype.done = function (str) {
     this._domNode.innerHTML += 'DONE.';
