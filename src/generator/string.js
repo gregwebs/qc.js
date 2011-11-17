@@ -10,15 +10,15 @@ define([
    *
    * @constant
    */
-  exports.strings = new function() {
+  exports.strings = (function() {
       var a = base.arrays(number.range(32, 255));
 
-      this.arb = function (size) {
+      var arb = function (size) {
           var tmp = util.generateValue(a, size);
           return String.fromCharCode.apply(String, tmp);
       };
 
-      this.shrink = function (size, str) {
+      var shrink = function (size, str) {
           var i, ret = [], tmp = new Array(str.length);
           for (i = 0; i < str.length; i++) {
               tmp[i] = str.charCodeAt(i);
@@ -32,8 +32,8 @@ define([
           return ret;
       };
 
-      return this;
-  };
+      return { arb: arb, shrink: shrink };
+  })();
 
   /**
    * Character value generator.
@@ -41,9 +41,9 @@ define([
    *
    * @constant
    */
-  exports.chararcters = base.mod(number.range(32, 255), function (num) {
-      return String.fromCharCode(num);
-    }
+  exports.chararcters = base.mod(
+    number.range(32, 255),
+    function (num) { return String.fromCharCode(num); }
   );
 
   exports.nonEmptys = {
