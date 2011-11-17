@@ -26,13 +26,14 @@ q = qc// so i can play with it globally
 //                    z.reverse();
 //                    c.assert(z.toString() == y.concat(x).toString());
 //                });
-        var config = new qc.Config(100, 1000);
+        var config = new qc.Config(100, 1000, 100);
         require([
           '../test/UxebuCiListener',
 //          '../test/selfchecks',
-//          '../test/random',
+          '../test/random',
           '../test/generator-base',
           '../test/generator-string',
+          '../test/generator-number',
 //          '../examples/stringSplitter',
         ], function(UxebuCiListener){
 
