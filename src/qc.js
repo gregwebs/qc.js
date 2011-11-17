@@ -3,7 +3,7 @@
 // Tiny javascript quickcheck port.
 
 define([
-  'core',
+  'core', 'random',
   'generator',
   'Case', 'Config', 'Distribution', 'Fail',
   'Invalid', 'Pass', 'Prop', 'Stats'
