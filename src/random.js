@@ -1,7 +1,7 @@
 define(function() {
   var exports = {};
   
-  var getPositiveInteger = exports.getPositiveInteger = function(top) {
+  exports.getPositiveInteger = function(top) {
       return Math.floor(Math.random() * top);
   }
 
@@ -11,11 +11,11 @@ define(function() {
    * @return Integer A random number.
    */
   exports.getInteger = function(top) {
-      return getPositiveInteger(2 * top) - top;
+    return Math.floor(Math.random() * top * 2) - top;
   }
 
   exports.getFloat = function() {
-      return Math.random();
+    return Math.random();
   }
 
   return exports;
