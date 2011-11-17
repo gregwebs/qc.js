@@ -5,7 +5,7 @@ define([
   var gen = qc.generator;
 
   var consts = [1, 'one', 'uno'];
-  qc.declare("constants", [gen.constants.apply(null, consts)],
+  qc.declare("chooseValue", [gen.chooseValue.apply(null, consts)],
     function(testCase, value) {
       testCase.assert(consts.indexOf(value) != -1);
     }
@@ -13,7 +13,7 @@ define([
 
   qc.declare(
     "choose from (positive) integers",
-    [gen.choose(gen.number.integers, gen.number.positiveIntegers)],
+    [gen.chooseGenerator(gen.number.integers, gen.number.positiveIntegers)],
     function(testCase, value) {
       testCase.assert(parseInt(value)==value);
     }
@@ -36,18 +36,32 @@ define([
     gen.string.strings, gen.string.chararcters,
     gen.booleans, gen.nulls, gen.dates, gen.undefineds
   ];
-  qc.declare("arrays", [gen.arrays(gen.choose.apply(null, allTypes))],
+  var arrayOfAnyKindOfTypes = gen.arrays(gen.chooseGenerator.apply(null, allTypes));
+  qc.declare("arrays", [arrayOfAnyKindOfTypes],
     function(testCase, value) {
       testCase.assert(Object.prototype.toString.call(value) == '[object Array]');
     }
   );
 
-//  qc.declare("non empty arrays", [gen.nonEmptyArrays],
-//    function(testCase, value) {
-//      testCase.assert(0);
-//    }
-//  );
-//
+  // The arraysOfSize tests are pretty simple, but I don't know how to better test them.
+  qc.declare("arrays of size", [gen.arraysOfSize([gen.nulls])],
+    function(testCase, value) {
+      testCase.assert(value.length == 1);
+    }
+  );
+  qc.declare("arrays of size", [gen.arraysOfSize([gen.nulls, gen.number.integers, gen.number.floats])],
+    function(testCase, value) {
+      testCase.assert(value.length == 3);
+    }
+  );
+
+  qc.declare("non empty arrays", [gen.nonEmptyArrays(gen.nulls)],
+    function(testCase, value) {
+      testCase.guard(value.length != 1); // Exclude all of length=1 so we are sure not to only get length=1.
+      testCase.assert(value.length > 0);
+    }
+  );
+
   qc.declare("dates", [gen.dates],
     function(testCase, value) {
       testCase.assert(value instanceof Date);

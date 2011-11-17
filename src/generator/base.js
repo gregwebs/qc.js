@@ -7,7 +7,7 @@ define([
   /**
    * Return one of the results of any given generator.
    */
-  exports.choose = function(/** generators... */) {
+  exports.chooseGenerator = function(/** generators... */) {
     var d = Distribution.uniform(arguments);
     return {
       arb: function (size) {
@@ -21,7 +21,7 @@ define([
    * Generator builder. The created generator will always return the given
    * constant value.
    */
-  var constants = exports.constants = function(/** values... */) {
+  var chooseValue = exports.chooseValue = function(/** values... */) {
     var d = Distribution.uniform(arguments);
     return {
       arb: function () {
@@ -35,14 +35,14 @@ define([
    *
    * @constant
    */
-  exports.booleans = constants(false, true);
+  exports.booleans = chooseValue(false, true);
 
   /**
    * Null generator. Always generates 'null'.
    *
    * @constant
    */
-  var nulls = exports.nulls = constants(null);
+  var nulls = exports.nulls = chooseValue(null);
 
   /**
    * Array generator. Generates array of arbitrary length with given generator.
@@ -52,22 +52,42 @@ define([
    * @param [shrinkStrategy] optional shrinking strategy. Default is
    *        'arrShrinkOne'
    */
-  exports.arrays = function(innerGen, shrinkStrategy) {
-    var generator = function(size) {
+  var arrays = exports.arrays = function(generator, shrinkStrategy, minSize) {
+    var generatorFunc = function(size) {
       var i, list = [];
-      var listSize = random.getPositiveInteger(size);
+      var listSize = random.getPositiveInteger(size) || minSize;
       for (i = 0; i < listSize; i += 1) {
-        list.push(util.generateValue(innerGen, size));
+        list.push(util.generateValue(generator, size));
       }
       return list;
     }
-    return { arb: generator, shrink: shrinkStrategy || arrShrinkOne };
-  }
+    return { arb: generatorFunc, shrink: shrinkStrategy || arrShrinkOne };
+  };
 
-  exports.nonEmptyArrays = function(){
-// TODO
-    return { arb: function(){ return [1]; } }
-  }
+  /**
+   * Generate an array with a fixed length of the number of generators given.
+   * For example:
+   *    qs.generator.arraysOfSize([qs.generator.null, qs.generator.boolean])
+   * will always create an array with exactly two element.
+   * @param generator The generator to fill the array with content.
+   * @param shrinkStrategy Shrink the result in case of failure, to narrow down the failing values.
+   */
+  exports.arraysOfSize = function(generators, shrinkStrategy) {
+    var generator = function(size) {
+      return generators.map(function(g){ return util.generateValue(g, size) });
+    }
+    return { arb: generator, shrink: shrinkStrategy || arrShrinkOne };
+  };
+
+  /**
+   * Generate arrays with at least one element.
+   * @param generator The generator to fill the array with content.
+   * @param shrinkStrategy Shrink the result in case of failure, to narrow down the failing values.
+   */
+  exports.nonEmptyArrays = function(generator, shrinkStrategy){
+    return arrays(generator, shrinkStrategy, 1);
+  };
+
 
   /**
    * Date value generator. Always generates a new Date object by calling
@@ -143,7 +163,7 @@ define([
    *
    * @constant
    */
-  var undefineds = exports.undefineds = constants(undefined);
+  var undefineds = exports.undefineds = chooseValue(undefined);
 
   exports.undefinedOr = function(opt) {
       var d = new Distribution([[10, undefineds], [90, opt]]);
