@@ -37,7 +37,7 @@ define([
     }
     for (var i=0, l=testResults.failure.length; i<l; i++){
       var r = testResults.failure[i];
-      testCases.push('<testcase classname="{{TAG}}.qc.js" name="' + r.name.replace(/["<>]/, '') + '" time="0"></testcase>' +
+      testCases.push('<testcase classname="{{TAG}}.qc.js" name="' + r.replace(/["<>]/, '') + '" time="0">' +
         '<failure message="????">STACKTRACE</failure>'+
         '</testcase>');
     }
