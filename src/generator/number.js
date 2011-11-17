@@ -1,6 +1,6 @@
 define([
-  'random'
-], function(random) {
+  'random', 'generator/base'
+], function(random, base) {
   var exports = {};
 
   /**
@@ -50,15 +50,6 @@ define([
       }
   };
 
-  exports.range = function(a, b) {
-      var min = Math.min(a, b),
-          max = Math.max(a, b);
-
-      return function (size) {
-          return Math.floor(Math.random() * (max - min)) + min;
-      };
-  }
-
   /**
    * Float value generator. Generates a floating point value in between 0.0 and
    * 1.0. <br/>
@@ -83,6 +74,15 @@ define([
           return ret;
       }
   };
+
+  exports.range = function(minValue, maxValue) {
+    var min = Math.min(minValue, maxValue);
+    var max = Math.max(minValue, maxValue);
+    var generator = function() {
+      return Math.floor(Math.random() * (max - min)) + min;
+    }
+    return { arb: generator };
+  }
 
   return exports;
 });
