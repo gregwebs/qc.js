@@ -1,0 +1,6 @@
+{
+  "addSemicolons": true,
+  "trimWhitespace": true,
+  "quotes": "'",
+  "eof": "\n"
+}
