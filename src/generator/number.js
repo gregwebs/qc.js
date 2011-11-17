@@ -10,7 +10,10 @@ define([
    * @constant
    */
   exports.integers = {
-      arb: random.getPositiveInteger,
+      arb: function(size){
+        var ret = random.getInteger(size);
+        return ret;
+      },
       shrink: function (size, x) {
           var tmp = x, ret = [];
           if (x < 0) {
