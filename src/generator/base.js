@@ -55,7 +55,10 @@ define([
   var arrays = exports.arrays = function(generator, shrinkStrategy, minSize) {
     var generatorFunc = function(size) {
       var i, list = [];
-      var listSize = random.getPositiveInteger(size) || minSize;
+      var listSize = random.getPositiveInteger(size);
+      if (minSize){
+        listSize = Math.max(listSize, minSize);
+      }
       for (i = 0; i < listSize; i += 1) {
         list.push(util.generateValue(generator, size));
       }
