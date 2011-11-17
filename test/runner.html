@@ -15,17 +15,6 @@
     <script type="text/javascript">
       require(['qc'], function(qc){
 q = qc// so i can play with it globally
-//        var gen = qs.generator;
-//        var positiveIntegerList = gen.arrays(gen.number.positiveIntegers);
-//
-//        qc.declare("reverse", [positiveIntegerList, positiveIntegerList],
-//                function(c, x, y) {
-//                    var z = x.concat(y);
-//                    x.reverse();
-//                    y.reverse();
-//                    z.reverse();
-//                    c.assert(z.toString() == y.concat(x).toString());
-//                });
         var config = new qc.Config(100, 1000, 100);
         require([
           '../test/UxebuCiListener',
@@ -34,16 +23,14 @@ q = qc// so i can play with it globally
           '../test/generator-base',
           '../test/generator-string',
           '../test/generator-number',
+//          '../test/Distribution',
 //          '../examples/stringSplitter',
         ], function(UxebuCiListener){
 
           qc.runAllProps(config, new UxebuCiListener('testresults', true));
         });
 
-//        console.log('Bikeshed version:', bs.version);
-//
-//        // demo code goes here.
-//        var myStage = bs.createStage('demo', 800, 600);
+// create a Listener, that converts intentionally failing tests into passing results.
       });
     </script>
   </body>
