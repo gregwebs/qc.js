@@ -1,7 +1,3 @@
-// Copyright (c) 2009, Darrin Thompson
-
-// Some self checks for our generators.
-
 define([
   'qc'
 ],function(qc){
@@ -76,19 +72,5 @@ define([
     }
   );
 
-
-
-/*
-  qc.declare("random positive integer", [random.getPositiveInteger],
-    function(c, a) {
-      testCase.assert(!isNaN(a) && parseInt(a)===a && a >= 0);
-    }
-  );
-
-  qc.declare("random float", [random.getFloat],
-    function(c, a) {
-      testCase.assert(!isNaN(a));
-    }
-  );
 //*/
 });
