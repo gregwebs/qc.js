@@ -64,7 +64,7 @@ define(function() {
    *
    * @return object with highest probability
    */
-  Distribution.prototype.mostProbable = function () {
+  Distribution.prototype.getMostProbable = function () {
       var max = 0, ret = null, i;
 
       for (i = 0; i < this.data.length; i++) {
