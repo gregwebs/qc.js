@@ -1,4 +1,4 @@
-define([
+define('RhinoListener', [
   'ConsoleListener'
 ],function(ConsoleListener) {
   /**

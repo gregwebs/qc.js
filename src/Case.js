@@ -1,4 +1,4 @@
-define(function() {
+define('Case', function() {
   /**
    * The Test Case class generated every time a property is tested.
    * An instance of Case is always passed as first argument to a property's

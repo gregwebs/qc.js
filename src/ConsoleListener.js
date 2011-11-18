@@ -1,4 +1,4 @@
-define(function() {
+define('ConsoleListener', function() {
   // generic 'console' listener. When overwriting implement log and warn
   /**
    * Abstract class for building 'console' based listeners.

@@ -1,4 +1,4 @@
-define([
+define('generator/string', [
   'generator/base', 'generator/number', 'util'
 ],function(base, number, util) {
   var exports = {};

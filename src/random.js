@@ -1,4 +1,4 @@
-define(function() {
+define('random', function() {
   var exports = {};
 
   exports.getPositiveInteger = function(top) {

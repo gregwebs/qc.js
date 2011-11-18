@@ -1,4 +1,4 @@
-define([
+define('Prop', [
   'core', 'util',
   'Case', 'Distribution', 'Fail', 'Stats'
 ],function(qs, util, Case, Distribution, Fail, Stats) {

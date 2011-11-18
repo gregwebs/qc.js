@@ -1,4 +1,4 @@
-define([
+define('HtmlListener', [
   'ConsoleListener'
 ],function(ConsoleListener) {
   /**

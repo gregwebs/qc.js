@@ -1,4 +1,4 @@
-define([
+define('FBCListener', [
   'ConsoleListener'
 ],function(ConsoleListener) {
   /**

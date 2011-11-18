@@ -1,4 +1,4 @@
-define([
+define('core', [
   'Distribution', 'Case'
 ], function(Distribution, Case) {
 

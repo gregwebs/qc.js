@@ -1,4 +1,4 @@
-define([
+define('Stats', [
   'Pass', 'Invalid'
 ],function(Pass, Invalid) {
   /**

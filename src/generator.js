@@ -1,4 +1,4 @@
-define([
+define('generator', [
   'generator/base',
   'generator/number',
   'generator/string',

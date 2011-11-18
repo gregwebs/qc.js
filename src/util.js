@@ -3,7 +3,7 @@
  * that are used throughout qc.
  *
  */
-define(function() {
+define('util', function() {
 
   var exports = {};
 

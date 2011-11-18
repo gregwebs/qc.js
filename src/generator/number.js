@@ -1,4 +1,4 @@
-define([
+define('generator/number', [
   'random', 'generator/base'
 ], function(random, base) {
   var exports = {};

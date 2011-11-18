@@ -1,4 +1,4 @@
-define(function() {
+define('Distribution', function() {
   /**
    * Probability distributions.
    *

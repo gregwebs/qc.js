@@ -1,4 +1,4 @@
-define(function() {
+define('Pass', function() {
   /**
    * Report class for successful tested properties.
    *

@@ -2,11 +2,10 @@
 
 // Tiny javascript quickcheck port.
 
-define([
+define('qc', [
   'core', 'random',
   'generator',
-  'Case', 'Config', 'Distribution', 'Fail',
-  'Invalid', 'Pass', 'Prop', 'Stats'
+  'Config', 'Distribution', 'Prop'
 ], function() {
 
   var exports = {};

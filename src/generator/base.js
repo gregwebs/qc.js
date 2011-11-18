@@ -1,4 +1,4 @@
-define([
+define('generator/base', [
   'random', 'util',
   'Distribution'
 ], function(random, util, Distribution) {
