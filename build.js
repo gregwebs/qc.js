@@ -56,6 +56,8 @@ print('\n');
 
 console.log('Writing file "%s"', FILENAME);
 qcSrc = 'var qc = null;\n;(function(){' + qcSrc + '\nqc = __qc;\n})();';
+// For making it available as node module.
+qcSrc += '\nif (typeof exports!=\'undefined\') exports.qc = qc;\n';
 fs.writeFile(FILENAME, qcSrc, function (err) {
   if (err) throw err;
   console.log('DONE, have a nice day!');
