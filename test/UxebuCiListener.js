@@ -12,14 +12,32 @@ define([
   };
   UxebuCiListener.prototype = new HtmlListener();
 
+  var lastType = '';
+  var lastResultName = '';
+
+  UxebuCiListener.prototype.noteResult = function (result) {
+    lastResultName = result.name;
+    HtmlListener.prototype.noteResult.apply(this, arguments); // Call parent method.
+  }
+
   UxebuCiListener.prototype.passed = function (str) {
     HtmlListener.prototype.passed.apply(this, arguments); // Call parent method.
     testResults.passed.push(str);
+    lastType = 'passed';
   }
-  
+
   UxebuCiListener.prototype.failure = function (str) {
     HtmlListener.prototype.failure.apply(this, arguments); // Call parent method.
-    testResults.failure.push(str);
+    testResults.failure.push(lastResultName + ': ' + str);
+    lastType = 'failure';
+  }
+
+  UxebuCiListener.prototype.log = function (str) {
+    HtmlListener.prototype.log.apply(this, arguments); // Call parent method.
+    if (lastType=='failure'){
+      var arr = testResults[lastType];
+      arr[arr.length-1] += ''+str;
+    }
   }
 
   UxebuCiListener.prototype.done = function (str) {
