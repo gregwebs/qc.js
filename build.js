@@ -2,6 +2,7 @@ var fs = require('fs');
 var SRC_PATH = 'src/';
 var FILENAME = 'dist/qc.js';
 
+var print = function(s){process.stdout.write(s)};
 // Build qc.js, the built file.
 function readSourceFile(fileName){
   return fs.readFileSync(SRC_PATH + fileName + '.js');
@@ -9,7 +10,9 @@ function readSourceFile(fileName){
 
 console.log('Reading source files...');
 // For now we are resolving all deps manually by listing the files here :) #improvable, yo.
-var files = 'Case Config ConsoleListener HtmlListener Distribution Fail core Invalid Pass random Stats util '+
+var files = 'Case Config '+
+  'ConsoleListener HtmlListener NodeConsoleListener '+
+  'Distribution Fail core Invalid Pass random Stats util '+
   'generator/base generator/number generator/string generator Prop qc';
 var qcSrc = files.split(' ').map(readSourceFile).join('\n');
 
@@ -24,7 +27,6 @@ function getModuleVariableName(moduleName){
   return '__' + moduleName.replace('/', '_'); // The variable name we use for the module.
 }
 
-print = function(s){process.stdout.write(s)};
 print('Removing require code ');
 // Replace define's with function calls.
 var matches = qcSrc.match(/define\('([/a-zA-Z0-9]+)'\s*(,\s*\[\s*([^\]]+)\])?/g);
