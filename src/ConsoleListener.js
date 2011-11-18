@@ -16,7 +16,7 @@ define('ConsoleListener', function() {
    * @class
    */
   function ConsoleListener(maxCollected) {
-      this.maxCollected = maxCollected || -1;
+     this.maxCollected = maxCollected || -1;
   }
 
   /**
@@ -81,43 +81,39 @@ define('ConsoleListener', function() {
    * Callback to notify listener that testing all properties finished.
    */
   ConsoleListener.prototype.done = function (result) {
-      this.log('done.');
+    this.log('done.');
   };
 
   /**
-   * MUST BE IMPLEMENTED BY SUBCLASSES.
    * Used by the ConsoleListener to print a message.
    * @param msg the message to print
    */
   ConsoleListener.prototype.log = function(msg) {
-      throw('to be implemented by subclass');
+    console.log(str);
   };
 
   /**
-   * MUST BE IMPLEMENTED BY SUBCLASSES.
    * Print a pass message.
    * @param msg the message to print
    */
   ConsoleListener.prototype.passed = function(msg) {
-      throw('to be implemented by subclass');
+    console.log(str);
   };
 
   /**
-   * MUST BE IMPLEMENTED BY SUBCLASSES.
    * Print an invalid property message.
    * @param msg the message to print
    */
   ConsoleListener.prototype.invalid = function(msg) {
-      throw('to be implemented by subclass');
+    console.warn(str);
   };
 
   /**
-   * MUST BE IMPLEMENTED BY SUBCLASSES.
    * Print a failure message.
    * @param msg the message to print
    */
   ConsoleListener.prototype.failure = function(msg) {
-      throw('to be implemented by subclass');
+    console.error(str);
   };
 
   return ConsoleListener;
