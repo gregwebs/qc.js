@@ -15,7 +15,6 @@ define([
     );
   qc.declare("getProbablity", [distributionArrays],
     function(testCase, value) {
-      
       var d = new qc.Distribution(value);
       // Sum up all probabilities.
       var probabilitySum = value.reduce(function(lastValue, arr){return arr[0]+lastValue}, 0);
