@@ -5,7 +5,7 @@
 define('qc', [
   'core', 'random',
   'generator',
-  'Config', 'Distribution', 'Prop'
+  'Config', 'Distribution', 'Prop', 'HtmlListener'
 ], function() {
 
   var exports = {};
