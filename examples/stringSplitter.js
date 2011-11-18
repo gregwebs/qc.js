@@ -16,12 +16,34 @@ define([
   //    }
   //  }
 
-  var words = qc.arbArray(qc.arbString);
+  var gen = qc.generator;
+
+  var words = gen.nonEmptyArrays(gen.string.strings);
 
   qc.declare("stringSplitter", [words],
     function(testCase, value) {
-      console.log(value);
+      var possibleSeparators = getDistinctCharacters(value.join(''));
+      testCase.guard(possibleSeparators.length != 0); // If no separator can be found, try again, marks this test case as invalid.
+      var separator = possibleSeparators[0];
+      var input = value.join(separator);
+      var splitResult = input.split(separator);
+      // Compare the string representation of the arrays.
+      testCase.assert( ''+value == ''+splitResult );
     }
   );
+
+
+
+  var getDistinctCharacters = function(chars){
+    var unused = [];
+    for (var i=32; unused.push(i) && i<255; i++){}; // Create an array with all ints from 32..255, all possible chars.
+    chars.split('').map(function(s){
+      var foundAtPos = unused.indexOf(s.charCodeAt(0));
+      if (foundAtPos!=-1){
+        unused.splice(foundAtPos, 1); // Remove the found value.
+      }
+    });
+    return unused.map(function(charCode){ return String.fromCharCode(charCode) });
+  }
 //*/
 });
