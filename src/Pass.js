@@ -6,7 +6,7 @@ define(function() {
    */
   function Pass(prop, stats) {
       /** status = "pass" */
-      this.status = "pass";
+      this.status = 'pass';
 
       /** the property this object was build for.*/
       this.prop = prop;
@@ -19,7 +19,7 @@ define(function() {
   }
 
   Pass.prototype.toString = function () {
-      return "Pass (" + this.name + ") counts=" + this.stats;
+      return 'Pass (' + this.name + ') counts=' + this.stats;
   };
 
   return Pass;

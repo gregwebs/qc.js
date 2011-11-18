@@ -83,9 +83,9 @@ define([
     var max = Math.max(minValue, maxValue);
     var generator = function() {
       return Math.floor(Math.random() * (max - min)) + min;
-    }
+    };
     return { arb: generator };
-  }
+  };
 
   return exports;
 });

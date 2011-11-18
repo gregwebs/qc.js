@@ -69,7 +69,7 @@ define([
   };
 
   Stats.prototype.toString = function () {
-      return "(pass=" + this.pass + ", invalid=" + this.invalid + ")";
+      return '(pass=' + this.pass + ', invalid=' + this.invalid + ')';
   };
 
   return Stats;

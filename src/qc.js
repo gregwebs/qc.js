@@ -39,7 +39,7 @@ define([
       var theProp = new exports.Prop(name, gens, body);
       exports.allProps.push(theProp);
       return theProp;
-  }
+  };
 
   return exports;
 });

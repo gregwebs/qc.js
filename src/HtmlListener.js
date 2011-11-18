@@ -18,7 +18,7 @@ define([
     if (this._showPasses) {
       this._domNode.innerHTML += str.status + ': ' + str.name + ' -- ' + JSON.stringify(str.stats) + '<br>';
     }
-  }
+  };
   HtmlListener.prototype.invalid = function (str) {
     this._domNode.innerHTML += str;
   };
@@ -27,10 +27,10 @@ define([
   };
   HtmlListener.prototype.log = function (str) {
     this._domNode.innerHTML += str;
-  }
+  };
   HtmlListener.prototype.done = function (str) {
     this._domNode.innerHTML += 'DONE.';
-  }
+  };
 
   return HtmlListener;
 });

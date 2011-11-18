@@ -15,7 +15,7 @@ define([
       },
       shrink: null
     };
-  }
+  };
 
   /**
    * Generator builder. The created generator will always return the given
@@ -28,7 +28,7 @@ define([
         return d.pick();
       }
     };
-  }
+  };
 
   /**
    * Boolean value generator. Generates true or false by 50:50 chance.
@@ -63,7 +63,7 @@ define([
         list.push(util.generateValue(generator, size));
       }
       return list;
-    }
+    };
     return { arb: generatorFunc, shrink: shrinkStrategy || arrShrinkOne };
   };
 
@@ -77,8 +77,8 @@ define([
    */
   exports.arraysOfSize = function(generators, shrinkStrategy) {
     var generator = function(size) {
-      return generators.map(function(g){ return util.generateValue(g, size) });
-    }
+      return generators.map(function(g){ return util.generateValue(g, size); });
+    };
     return { arb: generator, shrink: shrinkStrategy || arrShrinkOne };
   };
 
@@ -119,7 +119,7 @@ define([
               }
           }
       };
-  }
+  };
 
   /**
    * Array shrinking strategy. Will build new Arrays by removing one element
@@ -139,14 +139,14 @@ define([
               tmp[i < idx ? i : i - 1] = arr[i];
           }
           return tmp;
-      }
+      };
 
       var i, ret = new Array(arr.length);
       for (i = 0; i < arr.length; i++) {
           ret[i] = copyAllBut(i);
       }
       return ret;
-  }
+  };
 
   /**
    * What is 'mod' supposed to mean? :( (wolframkriesing)
@@ -159,7 +159,7 @@ define([
               return fn(util.generateValue(a, size));
           }
       };
-  }
+  };
 
   /**
    * 'undefined' generator. Always generates 'undefined'.
@@ -180,7 +180,7 @@ define([
                          util.generateShrunkValues(opt, size, a);
           }
       };
-  }
+  };
 
   return exports;
 });

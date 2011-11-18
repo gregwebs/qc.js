@@ -26,17 +26,17 @@ define(function() {
    */
   ConsoleListener.prototype.noteResult = function (result) {
       var i, tags, tag, distr, d;
-      var statusString = result.status + ": " + result.name;
+      var statusString = result.status + ': ' + result.name;
 
-      if (result.status === "pass") {
+      if (result.status === 'pass') {
           this.passed(result);
           //this.log(result.counts);
       } else {
           this.invalid(statusString);
           this.log(result);
       }
-      if (result.status === "fail") {
-          this.failure("Failed case:");
+      if (result.status === 'fail') {
+          this.failure('Failed case:');
           this.log(result.failedCase);
       }
 
@@ -47,7 +47,7 @@ define(function() {
           for (i = 0; i < tags.length;i++) {
               tag = tags[i];
               if (tag instanceof Array) {
-                  this.log(tag[0] + " : " + tag[1]);
+                  this.log(tag[0] + ' : ' + tag[1]);
               } else {
                   this.log(tag);
               }
@@ -71,7 +71,7 @@ define(function() {
           this.log('collected:');
           for (i = 0; i < distr.length; i++) {
               d = distr[i];
-              this.log(d[0] * 100 + "% : " + d[1]);
+              this.log(d[0] * 100 + '% : ' + d[1]);
           }
       }
 
@@ -90,8 +90,8 @@ define(function() {
    * @param msg the message to print
    */
   ConsoleListener.prototype.log = function(msg) {
-      throw("to be implemented by subclass");
-  }
+      throw('to be implemented by subclass');
+  };
 
   /**
    * MUST BE IMPLEMENTED BY SUBCLASSES.
@@ -99,8 +99,8 @@ define(function() {
    * @param msg the message to print
    */
   ConsoleListener.prototype.passed = function(msg) {
-      throw("to be implemented by subclass");
-  }
+      throw('to be implemented by subclass');
+  };
 
   /**
    * MUST BE IMPLEMENTED BY SUBCLASSES.
@@ -108,8 +108,8 @@ define(function() {
    * @param msg the message to print
    */
   ConsoleListener.prototype.invalid = function(msg) {
-      throw("to be implemented by subclass");
-  }
+      throw('to be implemented by subclass');
+  };
 
   /**
    * MUST BE IMPLEMENTED BY SUBCLASSES.
@@ -117,8 +117,8 @@ define(function() {
    * @param msg the message to print
    */
   ConsoleListener.prototype.failure = function(msg) {
-      throw("to be implemented by subclass");
-  }
+      throw('to be implemented by subclass');
+  };
 
   return ConsoleListener;
 });

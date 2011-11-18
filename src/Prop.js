@@ -108,7 +108,7 @@ define([
               stats.incrementPass();
           }
           catch (e) {
-              if (e === "AssertFailed") {
+              if (e === 'AssertFailed') {
                   dist = !testCase.collected ||
                           testCase.collected.length === 0 ?  null :
                               new Distribution(testCase.collected);
@@ -116,7 +116,7 @@ define([
                   shrunkArgs = qs.shrinkLoop(config, this, size, args);
                   return new Fail(this, stats, args, shrunkArgs,
                                   testCase.tags, dist);
-              } else if (e === "InvalidCase") {
+              } else if (e === 'InvalidCase') {
                   stats.incrementInvalid();
               } else {
                   throw (e);

@@ -19,7 +19,7 @@ define(function() {
    */
   Case.prototype.assert = function (bool) {
       if (!bool) {
-          throw ("AssertFailed");
+          throw ('AssertFailed');
       }
   };
 
@@ -30,7 +30,7 @@ define(function() {
    */
   Case.prototype.guard = function (bool) {
       if (!bool) {
-          throw ("InvalidCase");
+          throw ('InvalidCase');
       }
   };
 

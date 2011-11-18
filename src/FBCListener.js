@@ -14,7 +14,7 @@ define([
   FBCListener.prototype = new ConsoleListener();
   FBCListener.prototype.passed = function (str) {
       console.log(str);
-  }
+  };
   FBCListener.prototype.invalid = function (str) {
       console.warn(str);
   };
@@ -23,7 +23,7 @@ define([
   };
   FBCListener.prototype.log = function (str) {
       console.log(str);
-  }
+  };
 
   return FBCListener;
 });

@@ -1,7 +1,7 @@
 /**
  * All functions provided in here are just private utility functions
  * that are used throughout qc.
- * 
+ *
  */
 define(function() {
 
@@ -22,7 +22,7 @@ define(function() {
       gen = gen.arb;
     }
     return gen(size);
-  }
+  };
 
   /**
    * Uses the generators specific shrinking method to shrink a value the
@@ -50,7 +50,7 @@ define(function() {
 
     var tmp = gen.shrink(size, arg);
     return (tmp === null || tmp === undefined) ? [] : tmp;
-  }
+  };
 
   return exports;
 });

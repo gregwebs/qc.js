@@ -14,7 +14,7 @@ define([
    */
   exports.resetProps = function() {
       allProps = [];
-  }
+  };
 
   /**
    * @private
@@ -58,7 +58,7 @@ define([
       }
 
       return failedArgs.length === 0 ? null : failedArgs[0];
-  }
+  };
 
   exports.runAllProps = function(config, listener) {
       var once, i = 0;
@@ -82,7 +82,7 @@ define([
               listener.noteResult(allProps[i].run(config));
           }
       }
-  }
+  };
 
 
   // some starter generators and support utilities.
@@ -92,14 +92,14 @@ define([
       return function () {
           return d.pick();
       };
-  }
+  };
 
   exports.choose = function(/** values */) {
       var d = Distribution.uniform(arguments);
       return function () {
           return d.pick();
       };
-  }
+  };
 
 
   /**
@@ -134,7 +134,7 @@ define([
           }
           c.assert(false);
       };
-  }
+  };
 
   /**
    * Property test function modifier. Instead of finishing testing when an
@@ -152,7 +152,7 @@ define([
               c.assert(false);
           }
       };
-  }
+  };
 
   return exports;
 });
