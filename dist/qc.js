@@ -102,16 +102,16 @@ var qc = null;
   ConsoleListener.prototype.done = function (result) {
     this.log('done.');
   };
-  ConsoleListener.prototype.log = function(msg) {
+  ConsoleListener.prototype.log = function(str) {
     console.log(str);
   };
-  ConsoleListener.prototype.passed = function(msg) {
+  ConsoleListener.prototype.passed = function(str) {
     console.log(str);
   };
-  ConsoleListener.prototype.invalid = function(msg) {
+  ConsoleListener.prototype.invalid = function(str) {
     console.warn(str);
   };
-  ConsoleListener.prototype.failure = function(msg) {
+  ConsoleListener.prototype.failure = function(str) {
     console.error(str);
   };
   return ConsoleListener;
@@ -774,8 +774,9 @@ var qc = null;
       return theProp;
   };
   return exports;
-})(__core,__random,__generator,__Config,__Distribution,__Prop,__HtmlListener);
+})(__core,__random,__generator,__Config,__Distribution,__Prop,__ConsoleListener,__HtmlListener);
 
 
 qc = __qc;
 })();
+if (typeof exports!='undefined') exports.qc = qc;
