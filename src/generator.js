@@ -1,7 +1,7 @@
 define('generator', [
   'generator/base',
   'generator/number',
-  'generator/string',
+  'generator/string'
 ], function(base, number, string) {
 
   // Populate the following using their namespaces.
