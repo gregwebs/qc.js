@@ -15,20 +15,7 @@
     <script type="text/javascript">
       require(['qc'], function(qc){
 q = qc// so i can play with it globally
-        var config = new qc.Config(100, 1000, 100);
-        require([
-          '../test/UxebuCiListener',
-          '../test/random',
-          '../test/generator-base',
-          '../test/generator-string',
-          '../test/generator-number',
-          '../test/Distribution',
-          '../examples/stringSplitter',
-        ], function(UxebuCiListener){
-
-          qc.runAllProps(config, new UxebuCiListener('testresults', true));
-        });
-
+        require(['../test/allTests.js']);
 // create a Listener, that converts intentionally failing tests into passing results.
       });
     </script>
