@@ -88,7 +88,7 @@ define('ConsoleListener', function() {
    * Used by the ConsoleListener to print a message.
    * @param msg the message to print
    */
-  ConsoleListener.prototype.log = function(msg) {
+  ConsoleListener.prototype.log = function(str) {
     console.log(str);
   };
 
@@ -96,7 +96,7 @@ define('ConsoleListener', function() {
    * Print a pass message.
    * @param msg the message to print
    */
-  ConsoleListener.prototype.passed = function(msg) {
+  ConsoleListener.prototype.passed = function(str) {
     console.log(str);
   };
 
@@ -104,7 +104,7 @@ define('ConsoleListener', function() {
    * Print an invalid property message.
    * @param msg the message to print
    */
-  ConsoleListener.prototype.invalid = function(msg) {
+  ConsoleListener.prototype.invalid = function(str) {
     console.warn(str);
   };
 
@@ -112,7 +112,7 @@ define('ConsoleListener', function() {
    * Print a failure message.
    * @param msg the message to print
    */
-  ConsoleListener.prototype.failure = function(msg) {
+  ConsoleListener.prototype.failure = function(str) {
     console.error(str);
   };
 
