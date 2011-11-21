@@ -1,4 +1,4 @@
-define('allTests', ['qc'], function(qc){
+define('browser-tests', ['qc'], function(qc){
   var config = new qc.Config(100, 10, 100);
   require([
     '../test/UxebuCiListener',
