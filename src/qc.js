@@ -3,9 +3,9 @@
 // Tiny javascript quickcheck port.
 
 define('qc', [
-  'core', 'random',
+  'core', 'random', 'util',
   'generator',
-  'Config', 'Distribution', 'Prop', 'ConsoleListener', 'HtmlListener'
+  'Config', 'Distribution', 'Prop', 'ConsoleListener', 'HtmlListener', 'NodeConsoleListener'
 ], function() {
 
   var exports = {};
