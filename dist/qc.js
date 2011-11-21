@@ -268,104 +268,105 @@ var qc = null;
   var exports = {};
   var allProps = exports.allProps = [];
   exports.resetProps = function() {
-      allProps = [];
+    allProps = [];
   };
   exports.shrinkLoop = function(config, prop, size, args) {
-      var loop, i, testCase, failedArgs = [args], shrunkArgs = [];
-      for (loop = 0; loop < config.maxShrink; loop++) {
-                    shrunkArgs = [];
-          for (i = 0; i < failedArgs.length; i++) {
-              shrunkArgs = shrunkArgs.concat(
-                  prop.generateShrunkArgs(size, failedArgs[i]));
-          }
-          if (shrunkArgs.length === 0) {
-              return failedArgs.length === 0 ? null : failedArgs[0];
-          }
-                              failedArgs = [];
-          for (i = 0; i < shrunkArgs.length; i++) {
-              try {
-                  testCase = new Case(shrunkArgs[i]);
-                  prop.body.apply(prop, [testCase].concat(shrunkArgs[i]));
-              } catch (e) {
-                  if (e === 'InvalidCase') {
-                  } else if (e === 'AssertFailed') {
-                      if (loop === config.maxShrink - 1) {
-                          return shrunkArgs[i];
-                      } else {
-                          failedArgs.push(shrunkArgs[i]);
-                      }
-                  } else {
-                      throw e;
-                  }
-              }
-          }
+    var i, testCase;
+    var failedArgs = [args], shrunkArgs = [];
+    for (var loop = 0; loop < config.maxShrink; loop++) {
+            shrunkArgs = [];
+      for (i = 0; i < failedArgs.length; i++) {
+        shrunkArgs = shrunkArgs.concat(
+          prop.generateShrunkArgs(size, failedArgs[i]));
       }
-      return failedArgs.length === 0 ? null : failedArgs[0];
+      if (shrunkArgs.length === 0) {
+        return failedArgs.length === 0 ? null : failedArgs[0];
+      }
+            failedArgs = [];
+      for (i = 0; i < shrunkArgs.length; i++) {
+        try {
+          testCase = new Case(shrunkArgs[i]);
+          prop.body.apply(prop, [testCase].concat(shrunkArgs[i]));
+        } catch (e) {
+          if (e === 'InvalidCase') {
+          } else if (e === 'AssertFailed') {
+            if (loop === config.maxShrink - 1) {
+              return shrunkArgs[i];
+            } else {
+              failedArgs.push(shrunkArgs[i]);
+            }
+          } else {
+            throw e;
+          }
+        }
+      }
+    }
+    return failedArgs.length === 0 ? null : failedArgs[0];
   };
   exports.runAllProps = function(config, listener) {
-      var once, i = 0;
-      if (typeof setTimeout !== 'undefined') {
-                    once = function () {
-              if (i >= allProps.length) {
-                  listener.done();
-                  return;
-              }
-              var currentProp = allProps[i];
-              var result = currentProp.run(config);
-              listener.noteResult(result);
-              i += 1;
-              setTimeout(once, 0);
-          };
-          once();
-      } else {
-          for (; i < allProps.length; i++) {
-              listener.noteResult(allProps[i].run(config));
-          }
+    var once, i = 0;
+    if (typeof setTimeout !== 'undefined') {
+            once = function () {
+        if (i >= allProps.length) {
+          listener.done();
+          return;
+        }
+        var currentProp = allProps[i];
+        var result = currentProp.run(config);
+        listener.noteResult(result);
+        i += 1;
+        setTimeout(once, 0);
+      };
+      once();
+    } else {
+      for (; i < allProps.length; i++) {
+        listener.noteResult(allProps[i].run(config));
       }
+    }
   };
     exports.frequency = function() {
-      var d = new Distribution(arguments);
-      return function () {
-          return d.pick();
-      };
+    var d = new Distribution(arguments);
+    return function () {
+      return d.pick();
+    };
   };
   exports.choose = function() {
-      var d = Distribution.uniform(arguments);
-      return function () {
-          return d.pick();
-      };
+    var d = Distribution.uniform(arguments);
+    return function () {
+      return d.pick();
+    };
   };
   exports.justSize = {
-      arb: function (size) {
-              return size;
-          },
-      shrink: null
+    arb: function (size) {
+      return size;
+    },
+    shrink: null
   };
   exports.expectException = function(fn) {
-      return function (c) {
-          try {
-              fn.apply(this, arguments);
-          } catch (e) {
-              if (e === 'AssertFailed' || e === 'InvalidCase') {
-                  throw e;
-              }
-              c.assert(true);
-              return;
-          }
-          c.assert(false);
-      };
+    return function (c) {
+      try {
+        fn.apply(this, arguments);
+      } catch (e) {
+        if (e === 'AssertFailed' || e === 'InvalidCase') {
+          throw e;
+        }
+        c.assert(true);
+        return;
+      }
+      c.assert(false);
+    };
   };
   exports.failOnException = function(fn) {
-      return function (c) {
-          try {
-              fn.apply(this, arguments);
-          } catch (e) {
-              if (e === 'AssertFailed' || e === 'InvalidCase') {
-                  throw e;
-              }
-              c.assert(false);
-          }
-      };
+    return function (c) {
+      try {
+        fn.apply(this, arguments);
+      } catch (e) {
+        if (e === 'AssertFailed' || e === 'InvalidCase') {
+          throw e;
+        }
+        c.assert(false);
+      }
+    };
   };
   return exports;
 })(__Distribution,__Case);
@@ -399,7 +400,8 @@ var qc = null;
 ;var __random=( function() {
   var exports = {};
   exports.getPositiveInteger = function(top) {
-        return Math.floor(Math.random() * top);
+        top = typeof top == 'undefined' ? 1 : top;
+    return Math.floor(Math.random() * top);
   };
   exports.getInteger = function(top) {
     return Math.floor(Math.random() * top * 2) - top;
@@ -793,7 +795,7 @@ var qc = null;
       return theProp;
   };
   return exports;
-})(__core,__random,__generator,__Config,__Distribution,__Prop,__ConsoleListener,__HtmlListener,__NodeConsoleListener);
+})(__core,__random,__util,__generator,__Config,__Distribution,__Prop,__ConsoleListener,__HtmlListener,__NodeConsoleListener);
 
 
 qc = __qc;
