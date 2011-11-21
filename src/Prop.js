@@ -36,7 +36,7 @@ define('Prop', [
    * @private
    */
   Prop.prototype.generateShrunkArgs = function (size, args) {
-      // create shrunk args for each argument
+      // Create shrunk args for each argument.
       var i, idxs, tmp, gen, countShrunk = 0, shrunk = [], newArgs = [];
 
       for (i = 0; i < this.gens.length; i++) {

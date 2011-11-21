@@ -1,6 +1,6 @@
 define('HtmlListener', [
   'ConsoleListener'
-],function(ConsoleListener) {
+], function(ConsoleListener) {
   /**
    * QuickCheck callback for FireBug sending property results to FireBug's
    * console
