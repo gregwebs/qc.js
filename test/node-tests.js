@@ -4,6 +4,7 @@ require('./generator-number.js');
 require('./generator-string.js');
 require('./Distribution.js');
 require('./random.js');
+require('../examples/stringSplitter');
 
 var config = new qc.Config(100, 10, 100);
-qc.runAllProps(config, new qc.ConsoleListener());
+qc.runAllProps(config, new qc.NodeConsoleListener());

@@ -1,27 +1,32 @@
-// Copyright (c) 2009, Darrin Thompson
+;(function(){
 
-// Some self checks for our generators.
+  var main = function(qc){
+    qc.declare("random integer", [qc.getInteger],
+      function(c, a) {
+        c.assert(!isNaN(a) && parseInt(a)===a);
+      }
+    );
 
-define([
-  'qc', 'random'
-],function(qc, random){
+    qc.declare("random positive integer", [qc.getPositiveInteger],
+      function(c, a) {
+        c.assert(!isNaN(a) && parseInt(a)===a && a >= 0);
+      }
+    );
 
-  qc.declare("random integer", [random.getInteger],
-    function(c, a) {
-      c.assert(!isNaN(a) && parseInt(a)===a);
-    }
-  );
+    qc.declare("random float", [qc.getFloat],
+      function(c, a) {
+        c.assert(!isNaN(a));
+      }
+    );
 
-  qc.declare("random positive integer", [random.getPositiveInteger],
-    function(c, a) {
-      c.assert(!isNaN(a) && parseInt(a)===a && a >= 0);
-    }
-  );
+  //*/
+  };
 
-  qc.declare("random float", [random.getFloat],
-    function(c, a) {
-      c.assert(!isNaN(a));
-    }
-  );
-//*/
-});
+  // Make it work in node.js and in the browser, with both requires.
+  if (typeof exports != 'undefined'){
+    var qc = require('../dist/qc.js').qc;
+    main(qc);
+  } else {
+    define(['qc'], main);
+  }
+})();
