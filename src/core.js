@@ -13,92 +13,92 @@ define('core', [
    * deletes all declared properties
    */
   exports.resetProps = function() {
-      allProps = [];
+    allProps = [];
   };
 
   /**
    * @private
    */
   exports.shrinkLoop = function(config, prop, size, args) {
-      var loop, i, testCase, failedArgs = [args], shrunkArgs = [];
-
-      for (loop = 0; loop < config.maxShrink; loop++) {
-          // create shrunk argument lists from failed arguments
-
-          shrunkArgs = [];
-          for (i = 0; i < failedArgs.length; i++) {
-              shrunkArgs = shrunkArgs.concat(
-                  prop.generateShrunkArgs(size, failedArgs[i]));
-          }
-
-          if (shrunkArgs.length === 0) {
-              return failedArgs.length === 0 ? null : failedArgs[0];
-          }
-
-          // create new failed arguments from shrunk ones by running the
-          // property
-          failedArgs = [];
-          for (i = 0; i < shrunkArgs.length; i++) {
-              try {
-                  testCase = new Case(shrunkArgs[i]);
-                  prop.body.apply(prop, [testCase].concat(shrunkArgs[i]));
-              } catch (e) {
-                  if (e === 'InvalidCase') {
-                  } else if (e === 'AssertFailed') {
-                      if (loop === config.maxShrink - 1) {
-                          return shrunkArgs[i];
-                      } else {
-                          failedArgs.push(shrunkArgs[i]);
-                      }
-                  } else {
-                      throw e;
-                  }
-              }
-          }
+    var i, testCase;
+    var failedArgs = [args], shrunkArgs = [];
+    for (var loop = 0; loop < config.maxShrink; loop++) {
+      // Create shrunk argument lists from failed arguments.
+      shrunkArgs = [];
+      for (i = 0; i < failedArgs.length; i++) {
+        shrunkArgs = shrunkArgs.concat(
+          prop.generateShrunkArgs(size, failedArgs[i]));
       }
-
-      return failedArgs.length === 0 ? null : failedArgs[0];
+      if (shrunkArgs.length === 0) {
+        return failedArgs.length === 0 ? null : failedArgs[0];
+      }
+      // Create new failed arguments from shrunk ones by running the property.
+      failedArgs = [];
+      for (i = 0; i < shrunkArgs.length; i++) {
+        try {
+          testCase = new Case(shrunkArgs[i]);
+          prop.body.apply(prop, [testCase].concat(shrunkArgs[i]));
+        } catch (e) {
+          if (e === 'InvalidCase') {
+          } else if (e === 'AssertFailed') {
+            if (loop === config.maxShrink - 1) {
+              return shrunkArgs[i];
+            } else {
+              failedArgs.push(shrunkArgs[i]);
+            }
+          } else {
+            throw e;
+          }
+        }
+      }
+    }
+    return failedArgs.length === 0 ? null : failedArgs[0];
   };
 
+  /**
+   * All tests that had been defined by qc.declare() are executed
+   * by this function.
+   * @param config The configuration for all the test runs.
+   * @param listener The result reporter.
+   */
   exports.runAllProps = function(config, listener) {
-      var once, i = 0;
+    var once, i = 0;
 
-      if (typeof setTimeout !== 'undefined') {
-          // Use set timeout so listeners can draw in response to events.
-          once = function () {
-              if (i >= allProps.length) {
-                  listener.done();
-                  return;
-              }
-              var currentProp = allProps[i];
-              var result = currentProp.run(config);
-              listener.noteResult(result);
-              i += 1;
-              setTimeout(once, 0);
-          };
-          once();
-      } else {
-          for (; i < allProps.length; i++) {
-              listener.noteResult(allProps[i].run(config));
-          }
+    if (typeof setTimeout !== 'undefined') {
+      // Use set timeout so listeners can draw in response to events.
+      once = function () {
+        if (i >= allProps.length) {
+          listener.done();
+          return;
+        }
+        var currentProp = allProps[i];
+        var result = currentProp.run(config);
+        listener.noteResult(result);
+        i += 1;
+        setTimeout(once, 0);
+      };
+      once();
+    } else {
+      for (; i < allProps.length; i++) {
+        listener.noteResult(allProps[i].run(config));
       }
+    }
   };
-
 
   // some starter generators and support utilities.
 
   exports.frequency = function(/** functions */) {
-      var d = new Distribution(arguments);
-      return function () {
-          return d.pick();
-      };
+    var d = new Distribution(arguments);
+    return function () {
+      return d.pick();
+    };
   };
 
   exports.choose = function(/** values */) {
-      var d = Distribution.uniform(arguments);
-      return function () {
-          return d.pick();
-      };
+    var d = Distribution.uniform(arguments);
+    return function () {
+      return d.pick();
+    };
   };
 
 
@@ -109,10 +109,10 @@ define('core', [
    * @constant
    */
   exports.justSize = {
-      arb: function (size) {
-              return size;
-          },
-      shrink: null
+    arb: function (size) {
+      return size;
+    },
+    shrink: null
   };
 
 
@@ -122,18 +122,18 @@ define('core', [
    * fail.
    */
   exports.expectException = function(fn) {
-      return function (c) {
-          try {
-              fn.apply(this, arguments);
-          } catch (e) {
-              if (e === 'AssertFailed' || e === 'InvalidCase') {
-                  throw e;
-              }
-              c.assert(true);
-              return;
-          }
-          c.assert(false);
-      };
+    return function (c) {
+      try {
+        fn.apply(this, arguments);
+      } catch (e) {
+        if (e === 'AssertFailed' || e === 'InvalidCase') {
+          throw e;
+        }
+        c.assert(true);
+        return;
+      }
+      c.assert(false);
+    };
   };
 
   /**
@@ -142,16 +142,16 @@ define('core', [
    * and QuickCheck will continue.
    */
   exports.failOnException = function(fn) {
-      return function (c) {
-          try {
-              fn.apply(this, arguments);
-          } catch (e) {
-              if (e === 'AssertFailed' || e === 'InvalidCase') {
-                  throw e;
-              }
-              c.assert(false);
-          }
-      };
+    return function (c) {
+      try {
+        fn.apply(this, arguments);
+      } catch (e) {
+        if (e === 'AssertFailed' || e === 'InvalidCase') {
+          throw e;
+        }
+        c.assert(false);
+      }
+    };
   };
 
   return exports;
