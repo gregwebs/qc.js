@@ -2,7 +2,9 @@ define('random', function() {
   var exports = {};
 
   exports.getPositiveInteger = function(top) {
-      return Math.floor(Math.random() * top);
+    // Lets add 1 to top, otherwise the top number wouldn't be generated.
+    top = typeof top == 'undefined' ? 1 : top;
+    return Math.floor(Math.random() * top);
   };
 
   /**
