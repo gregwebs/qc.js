@@ -117,7 +117,7 @@ var qc = null;
   return ConsoleListener;
 })();
 
-;var __HtmlListener=(function(ConsoleListener) {
+;var __HtmlListener=( function(ConsoleListener) {
   function HtmlListener(nodeId, showPasses) {
     this.maxCollected = 0;
     this._showPasses = showPasses;
@@ -142,6 +142,25 @@ var qc = null;
     this._domNode.innerHTML += 'DONE.';
   };
   return HtmlListener;
+})(__ConsoleListener);
+
+;var __NodeConsoleListener=( function(ConsoleListener) {
+  function NodeConsoleListener(){
+    ConsoleListener.apply(this, arguments);   };
+  NodeConsoleListener.prototype = new ConsoleListener();
+  NodeConsoleListener.prototype.passed = function (result) {
+    process.stdout.write('\033[32m.\033[0m');   };
+  NodeConsoleListener.prototype.done = function () {
+    console.log('\nDONE.');
+  };
+    NodeConsoleListener.prototype.failure = function (result) {
+    console.log('\n\033[31mFAIL\033[0m', JSON.stringify(result).slice(0, 50));
+  };
+    NodeConsoleListener.prototype.log = function (result) {
+  };
+  NodeConsoleListener.prototype.invalid = function (result) {
+  };
+  return NodeConsoleListener;
 })(__ConsoleListener);
 
 ;var __Distribution=( function() {
@@ -380,7 +399,7 @@ var qc = null;
 ;var __random=( function() {
   var exports = {};
   exports.getPositiveInteger = function(top) {
-      return Math.floor(Math.random() * top);
+        return Math.floor(Math.random() * top);
   };
   exports.getInteger = function(top) {
     return Math.floor(Math.random() * top * 2) - top;
@@ -774,7 +793,7 @@ var qc = null;
       return theProp;
   };
   return exports;
-})(__core,__random,__generator,__Config,__Distribution,__Prop,__ConsoleListener,__HtmlListener);
+})(__core,__random,__generator,__Config,__Distribution,__Prop,__ConsoleListener,__HtmlListener,__NodeConsoleListener);
 
 
 qc = __qc;
