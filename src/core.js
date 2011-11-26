@@ -1,6 +1,6 @@
 define('core', [
-  'Distribution', 'Case'
-], function(Distribution, Case) {
+  'Distribution', 'Case', 'ConsoleListener'
+], function(Distribution, Case, ConsoleListener) {
 
   var exports = {};
   /**
@@ -63,6 +63,7 @@ define('core', [
    */
   exports.runAllProps = function(config, listener) {
     var once, i = 0;
+    listener = typeof listener == 'undefined' ? new ConsoleListener() : listener;
 
     if (typeof setTimeout !== 'undefined') {
       // Use set timeout so listeners can draw in response to events.
