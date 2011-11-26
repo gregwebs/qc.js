@@ -3,3 +3,4 @@
 - create a nice html listener
 - make all generators be functions, so they all work the same, now sometimes its a function sometimes not, that sucks
   and is not consistent
+- make build.json file for core and for html-generators so they can be built separately
