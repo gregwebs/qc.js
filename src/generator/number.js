@@ -9,7 +9,8 @@ define('generator/number', [
    *
    * @constant
    */
-  exports.integers = {
+  exports.integers = function(){
+    return {
       arb: function(size){
         var ret = random.getInteger(size);
         return ret;
@@ -31,6 +32,7 @@ define('generator/number', [
           }
           return ret;
       }
+    }
   };
 
   /**
@@ -39,7 +41,8 @@ define('generator/number', [
    *
    * @constant
    */
-  exports.positiveIntegers = {
+  exports.positiveIntegers = function(){
+    return {
       arb: random.getPositiveInteger,
       shrink: function (size, x) {
           var tmp = x, ret = [];
@@ -51,6 +54,7 @@ define('generator/number', [
           }
           return ret;
       }
+    }
   };
 
   /**
@@ -60,7 +64,8 @@ define('generator/number', [
    *
    * @constant
    */
-  exports.floats = {
+  exports.floats = function(){
+    return {
       arb: random.getFloat,
       shrink: function (size, x) {
           var tmp, ret = [];
@@ -76,6 +81,7 @@ define('generator/number', [
 
           return ret;
       }
+    }
   };
 
   exports.range = function(minValue, maxValue) {
