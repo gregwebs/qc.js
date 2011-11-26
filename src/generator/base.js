@@ -35,14 +35,18 @@ define('generator/base', [
    *
    * @constant
    */
-  exports.booleans = chooseValue(false, true);
+  exports.booleans = function(){
+    return chooseValue(false, true);
+  };
 
   /**
    * Null generator. Always generates 'null'.
    *
    * @constant
    */
-  var nulls = exports.nulls = chooseValue(null);
+  var nulls = exports.nulls = function(){
+    return chooseValue(null);
+  };
 
   /**
    * Array generator. Generates array of arbitrary length with given generator.
@@ -98,15 +102,17 @@ define('generator/base', [
    *
    * @constant
    */
-  exports.dates = {
+  exports.dates = function(){
+    return {
       arb: function () {
           return new Date();
       }
+    }
   };
 
   exports.nullOr = function(otherGen) {
       //return arbSelect(otherGen, arbNull);
-      var d = new Distribution([[10, nulls], [90, otherGen]]);
+      var d = new Distribution([[10, nulls()], [90, otherGen]]);
       return {
           arb: function (size) {
                   return util.generateValue(d.pick(), size);
@@ -166,10 +172,12 @@ define('generator/base', [
    *
    * @constant
    */
-  var undefineds = exports.undefineds = chooseValue(undefined);
+  var undefineds = exports.undefineds = function(){
+    return chooseValue(undefined);
+  };
 
   exports.undefinedOr = function(opt) {
-      var d = new Distribution([[10, undefineds], [90, opt]]);
+      var d = new Distribution([[10, undefineds()], [90, opt]]);
       return {
           arb: function (size) {
               return util.generateValue(d.pick(), size);

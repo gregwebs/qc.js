@@ -10,7 +10,7 @@ define('generator/string', [
    *
    * @constant
    */
-  exports.strings = (function() {
+  exports.strings = function(){
       var a = base.arrays(number.range(32, 255));
 
       var arb = function (size) {
@@ -34,7 +34,7 @@ define('generator/string', [
       };
 
       return { arb: arb, shrink: shrink };
-  })();
+  };
 
   /**
    * Character value generator.
@@ -42,10 +42,12 @@ define('generator/string', [
    *
    * @constant
    */
-  exports.chararcters = base.mod(
-    number.range(32, 255),
-    function (num) { return String.fromCharCode(num); }
-  );
+  exports.chararcters = function(){
+    return base.mod(
+      number.range(32, 255),
+      function (num) { return String.fromCharCode(num); }
+    );
+  };
 
   exports.nonEmptys = {
   };
