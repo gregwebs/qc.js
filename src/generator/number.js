@@ -23,7 +23,7 @@ define('generator/number', [
 
           while (true) {
               tmp = tmp / 2;
-              if (tmp === 0) {
+              if (tmp === 0 || isNaN(tmp)){ // If tmp is not a number quit too, should not happen.
                   break;
               }
 
