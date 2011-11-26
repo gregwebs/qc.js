@@ -1,6 +1,13 @@
 ;(function(){
+  // Make it work in node.js and in the browser, with both requires.
+  if (typeof exports != 'undefined'){
+    var qc = require('../dist/qc.js').qc;
+    main(qc);
+  } else {
+    define(['qc'], main);
+  }
 
-  var main = function(qc){
+  function main(qc){
     var gen = qc.generator;
 
     qc.declare("strings", [gen.string.strings],
@@ -14,16 +21,6 @@
         testCase.assert(value === ('' + value));
       }
     );
-
+    //*/
   };
-
-  // Make it work in node.js and in the browser, with both requires.
-  if (typeof exports != 'undefined'){
-    var qc = require('../dist/qc.js').qc;
-    main(qc);
-  } else {
-    define(['qc'], main);
-  }
-
-//*/
 })();

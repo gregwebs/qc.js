@@ -1,6 +1,13 @@
 ;(function(){
+  // Make it work in node.js and in the browser, with both requires.
+  if (typeof exports != 'undefined'){
+    var qc = require('../dist/qc.js').qc;
+    main(qc);
+  } else {
+    define(['qc'], main);
+  }
 
-  var main = function(qc){
+  function main(qc){
     var gen = qc.generator.number;
 
     qc.declare("integers", [gen.integers],
@@ -26,16 +33,6 @@
         testCase.assert(value >= -10 && value <= 10);
       }
     );
-
+    //*/
   };
-
-  // Make it work in node.js and in the browser, with both requires.
-  if (typeof exports != 'undefined'){
-    var qc = require('../dist/qc.js').qc;
-    main(qc);
-  } else {
-    define(['qc'], main);
-  }
-
-//*/
 })();

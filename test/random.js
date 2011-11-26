@@ -1,4 +1,11 @@
 ;(function(){
+  // Make it work in node.js and in the browser, with both requires.
+  if (typeof exports != 'undefined'){
+    var qc = require('../dist/qc.js').qc;
+    main(qc);
+  } else {
+    define(['qc'], main);
+  }
 
   var main = function(qc){
     qc.declare("random integer", [qc.getInteger],
@@ -18,15 +25,6 @@
         c.assert(!isNaN(a));
       }
     );
-
-  //*/
+    //*/
   };
-
-  // Make it work in node.js and in the browser, with both requires.
-  if (typeof exports != 'undefined'){
-    var qc = require('../dist/qc.js').qc;
-    main(qc);
-  } else {
-    define(['qc'], main);
-  }
 })();

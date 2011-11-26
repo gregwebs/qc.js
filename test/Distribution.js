@@ -1,6 +1,13 @@
 ;(function(){
+  // Make it work in node.js and in the browser, with both requires.
+  if (typeof exports != 'undefined'){
+    var qc = require('../dist/qc.js').qc;
+    main(qc);
+  } else {
+    define(['qc'], main);
+  }
 
-  var main = function(qc){
+  function main(qc){
     var gen = qc.generator;
 
     var distributionArrays = function(){
@@ -57,15 +64,6 @@
         testCase.assert(allProbs.length==1 && allProbs[0]==d.data[0][0]);
       }
     );
-
-  //*/
-  };
-
-  // Make it work in node.js and in the browser, with both requires.
-  if (typeof exports != 'undefined'){
-    var qc = require('../dist/qc.js').qc;
-    main(qc);
-  } else {
-    define(['qc'], main);
+    //*/
   }
 })();

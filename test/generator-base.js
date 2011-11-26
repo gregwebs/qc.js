@@ -1,6 +1,13 @@
 ;(function(){
+  // Make it work in node.js and in the browser, with both requires.
+  if (typeof exports != 'undefined'){
+    var qc = require('../dist/qc.js').qc;
+    main(qc);
+  } else {
+    define(['qc'], main);
+  }
 
-  var main = function(qc){
+  function main(qc){
     var gen = qc.generator;
 
     var consts = [1, 'one', 'uno'];
@@ -84,14 +91,6 @@
         testCase.assert(typeof value == 'undefined' || typeof value == 'number');
       }
     );
+    //*/
   };
-  //*/
-
-  // Make it work in node.js and in the browser, with both requires.
-  if (typeof exports != 'undefined'){
-    var qc = require('../dist/qc.js').qc;
-    main(qc);
-  } else {
-    define(['qc'], main);
-  }
 })();

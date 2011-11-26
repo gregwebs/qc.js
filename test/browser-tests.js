@@ -8,6 +8,9 @@ define('browser-tests', ['qc'], function(qc){
     '../test/generator-number',
     '../test/Distribution',
     '../examples/stringSplitter',
+
+    '../test/generator-html',
+
   ], function(UxebuCiListener){
     qc.runAllProps(config, new UxebuCiListener('testresults', true));
   });

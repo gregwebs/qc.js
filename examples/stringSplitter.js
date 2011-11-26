@@ -1,6 +1,13 @@
 ;(function(){
+  // Make it work in node.js and in the browser, with both requires.
+  if (typeof exports != 'undefined'){
+    var qc = require('../dist/qc.js').qc;
+    main(qc);
+  } else {
+    define(['qc'], main);
+  }
 
-  var main = function(qc){
+  function main(qc){
 
     // Show a simple example, inspired by http://theyougen.blogspot.com/2010/11/alternative-test-approach-quickcheck.html
     // The article above tested a simple string splitter, which is
@@ -60,12 +67,4 @@
     };
   //*/
   };
-
-  // Make it work in node.js and in the browser, with both requires.
-  if (typeof exports != 'undefined'){
-    var qc = require('../dist/qc.js').qc;
-    main(qc);
-  } else {
-    define(['qc'], main);
-  }
 })();
