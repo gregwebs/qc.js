@@ -264,7 +264,7 @@ var qc = null;
   return Fail;
 })();
 
-;var __core=( function(Distribution, Case) {
+;var __core=( function(Distribution, Case, ConsoleListener) {
   var exports = {};
   var allProps = exports.allProps = [];
   exports.resetProps = function() {
@@ -305,6 +305,7 @@ var qc = null;
   };
   exports.runAllProps = function(config, listener) {
     var once, i = 0;
+    listener = typeof listener == 'undefined' ? new ConsoleListener() : listener;
     if (typeof setTimeout !== 'undefined') {
             once = function () {
         if (i >= allProps.length) {
@@ -369,7 +370,7 @@ var qc = null;
     };
   };
   return exports;
-})(__Distribution,__Case);
+})(__Distribution,__Case,__ConsoleListener);
 
 ;var __Invalid=( function() {
   function Invalid(prop, stats) {
