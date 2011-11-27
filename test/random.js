@@ -8,7 +8,7 @@
   }
 
   function makeGenerator(func){
-    return { arb:func }
+    return { func:func }
   }
 
   function main(qc){

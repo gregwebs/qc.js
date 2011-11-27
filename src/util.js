@@ -17,8 +17,8 @@ define('util', function() {
    *
    * @return new generated value
    */
-  exports.generateValue = function(gen, size) {
-    return gen.arb(size);
+  exports.generateValue = function(generator, size) {
+    return generator.func(size);
   };
 
   /**

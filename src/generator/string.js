@@ -13,7 +13,7 @@ define('generator/string', [
   exports.strings = function(){
       var a = base.arrays(number.range(32, 255));
 
-      var arb = function (size) {
+      var func = function (size) {
           // Add 10 to the size to really get a string, not am empty string so often in the beginning.
           var tmp = util.generateValue(a, size+10);
           return String.fromCharCode.apply(String, tmp);
@@ -33,7 +33,7 @@ define('generator/string', [
           return ret;
       };
 
-      return { arb: arb, shrink: shrink };
+      return { func: func, shrink: shrink };
   };
 
   /**

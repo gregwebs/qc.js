@@ -11,7 +11,7 @@ define('generator/number', [
    */
   exports.integers = function(){
     return {
-      arb: function(size){
+      func: function(size){
         var ret = random.getInteger(size);
         return ret;
       },
@@ -43,7 +43,7 @@ define('generator/number', [
    */
   exports.positiveIntegers = function(){
     return {
-      arb: random.getPositiveInteger,
+      func: random.getPositiveInteger,
       shrink: function (size, x) {
           var tmp = x, ret = [];
           while (true) {
@@ -66,7 +66,7 @@ define('generator/number', [
    */
   exports.floats = function(){
     return {
-      arb: random.getFloat,
+      func: random.getFloat,
       shrink: function (size, x) {
           var tmp, ret = [];
 
@@ -90,7 +90,7 @@ define('generator/number', [
     var generator = function() {
       return Math.floor(Math.random() * (max - min)) + min;
     };
-    return { arb: generator };
+    return { func: generator };
   };
 
   return exports;

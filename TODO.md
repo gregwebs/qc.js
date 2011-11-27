@@ -2,4 +2,3 @@
   right now there are only strings passed, that is very unpleasent
 - create a nice html listener
 - make build.json file for core and for html-generators so they can be built separately
-- rename the generator function obj-property from 'arb' to 'generator'

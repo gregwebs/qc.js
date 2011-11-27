@@ -11,7 +11,7 @@ define([
       var digits = vals.map(function(val){ return ('0' + val.toString(16)).slice(-2) }).join('');
       return digits.slice(0, length);
     };
-    return { arb:generator };
+    return { func:generator };
   };
 
   var colorNames = [
@@ -52,7 +52,7 @@ define([
       var index = Math.round(Math.random() * (len-1));
       return colorNames[index];
     };
-    return { arb:generator };
+    return { func:generator };
   };
 
   return exports;

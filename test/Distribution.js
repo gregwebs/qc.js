@@ -11,7 +11,7 @@
     var gen = qc.generator;
 
     function makeGenerator(func){
-      return { arb:func }
+      return { func:func }
     }
 
     var distributionArrays = function(){

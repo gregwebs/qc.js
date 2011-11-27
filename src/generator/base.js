@@ -10,7 +10,7 @@ define('generator/base', [
   exports.chooseGenerator = function(/** generators... */) {
     var d = Distribution.uniform(arguments);
     return {
-      arb: function (size) {
+      func: function (size) {
           return util.generateValue(d.pick(), size);
       },
       shrink: null
@@ -24,7 +24,7 @@ define('generator/base', [
   var chooseValue = exports.chooseValue = function(/** values... */) {
     var d = Distribution.uniform(arguments);
     return {
-      arb: function () {
+      func: function () {
         return d.pick();
       }
     };
@@ -68,7 +68,7 @@ define('generator/base', [
       }
       return list;
     };
-    return { arb: generatorFunc, shrink: shrinkStrategy || arrShrinkOne };
+    return { func: generatorFunc, shrink: shrinkStrategy || arrShrinkOne };
   };
 
   /**
@@ -83,7 +83,7 @@ define('generator/base', [
     var generator = function(size) {
       return generators.map(function(g){ return util.generateValue(g, size); });
     };
-    return { arb: generator, shrink: shrinkStrategy || arrShrinkOne };
+    return { func: generator, shrink: shrinkStrategy || arrShrinkOne };
   };
 
   /**
@@ -104,7 +104,7 @@ define('generator/base', [
    */
   exports.dates = function(){
     return {
-      arb: function () {
+      func: function () {
           return new Date();
       }
     }
@@ -114,7 +114,7 @@ define('generator/base', [
       //return arbSelect(otherGen, arbNull);
       var d = new Distribution([[10, nulls()], [90, otherGen]]);
       return {
-          arb: function (size) {
+          func: function (size) {
                   return util.generateValue(d.pick(), size);
               },
           shrink: function (size, a) {
@@ -161,7 +161,7 @@ define('generator/base', [
    */
   exports.mod = function(a, fn) {
       return {
-          arb: function (size) {
+          func: function (size) {
               return fn(util.generateValue(a, size));
           }
       };
@@ -179,7 +179,7 @@ define('generator/base', [
   exports.undefinedOr = function(opt) {
       var d = new Distribution([[10, undefineds()], [90, opt]]);
       return {
-          arb: function (size) {
+          func: function (size) {
               return util.generateValue(d.pick(), size);
           },
           shrink: function (size, a) {

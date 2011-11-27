@@ -8,7 +8,7 @@ define([
 
   exports.hexUpperCases = function(size){
     return {
-      arb: function(){
+      func: function(){
         return qc.generateValue(util.getHexNumber(size)).toUpperCase();
       }
     };
@@ -16,7 +16,7 @@ define([
 
   exports.hexLowerCases = function(size){
     return {
-      arb: function(){
+      func: function(){
         return qc.generateValue(util.getHexNumber(size)).toLowerCase();
       }
     };
@@ -24,7 +24,7 @@ define([
 
   exports.hexMixedCases = function(size){
     return {
-      arb: function(){
+      func: function(){
         var ret = qc.generateValue(util.getHexNumber(size));
         // Convert each letter randomly to upper or lower case.
         ret = ret.split('').map(function(char){
@@ -41,7 +41,7 @@ define([
 
   exports.hexColors = function(size){
     return {
-      arb: function(){
+      func: function(){
         return qc.generateValue(
           gen.chooseGenerator(
             exports.hexLowerCases(size),
