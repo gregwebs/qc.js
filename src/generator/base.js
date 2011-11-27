@@ -107,7 +107,7 @@ define('generator/base', [
       func: function () {
           return new Date();
       }
-    }
+    };
   };
 
   exports.nullOr = function(otherGen) {

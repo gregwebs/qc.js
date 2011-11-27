@@ -32,7 +32,7 @@ define('generator/number', [
           }
           return ret;
       }
-    }
+    };
   };
 
   /**
@@ -54,7 +54,7 @@ define('generator/number', [
           }
           return ret;
       }
-    }
+    };
   };
 
   /**
@@ -81,7 +81,7 @@ define('generator/number', [
 
           return ret;
       }
-    }
+    };
   };
 
   exports.range = function(minValue, maxValue) {

@@ -30,7 +30,7 @@ define([
         ret = ret.split('').map(function(char){
           // Mix upper and lower case randomly.
           var func = Math.round(Math.random()) ? 'toLowerCase' : 'toUpperCase';
-          return char[func]()
+          return char[func]();
         });
         return ret.join('');
       }
