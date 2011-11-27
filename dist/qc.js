@@ -457,11 +457,8 @@ var qc = null;
 
 ;var __util=( function() {
   var exports = {};
-  exports.generateValue = function(gen, size) {
-    if (!(gen instanceof Function)) {
-      gen = gen.arb;
-    }
-    return gen(size);
+  exports.generateValue = function(generator, size) {
+    return generator.func(size);
   };
   exports.generateShrunkValues = function(gen, size, arg) {
     if (!gen || gen instanceof Function ||
@@ -480,7 +477,7 @@ var qc = null;
   exports.chooseGenerator = function() {
     var d = Distribution.uniform(arguments);
     return {
-      arb: function (size) {
+      func: function (size) {
           return util.generateValue(d.pick(), size);
       },
       shrink: null
@@ -489,13 +486,17 @@ var qc = null;
   var chooseValue = exports.chooseValue = function() {
     var d = Distribution.uniform(arguments);
     return {
-      arb: function () {
+      func: function () {
         return d.pick();
       }
     };
   };
-  exports.booleans = chooseValue(false, true);
-  var nulls = exports.nulls = chooseValue(null);
+  exports.booleans = function(){
+    return chooseValue(false, true);
+  };
+  var nulls = exports.nulls = function(){
+    return chooseValue(null);
+  };
   var arrays = exports.arrays = function(generator, shrinkStrategy, minSize) {
     var generatorFunc = function(size) {
       var i, list = [];
@@ -508,26 +509,28 @@ var qc = null;
       }
       return list;
     };
-    return { arb: generatorFunc, shrink: shrinkStrategy || arrShrinkOne };
+    return { func: generatorFunc, shrink: shrinkStrategy || arrShrinkOne };
   };
   exports.arraysOfSize = function(generators, shrinkStrategy) {
     var generator = function(size) {
       return generators.map(function(g){ return util.generateValue(g, size); });
     };
-    return { arb: generator, shrink: shrinkStrategy || arrShrinkOne };
+    return { func: generator, shrink: shrinkStrategy || arrShrinkOne };
   };
   exports.nonEmptyArrays = function(generator, shrinkStrategy){
     return arrays(generator, shrinkStrategy, 1);
   };
-  exports.dates = {
-      arb: function () {
+  exports.dates = function(){
+    return {
+      func: function () {
           return new Date();
       }
+    };
   };
   exports.nullOr = function(otherGen) {
-            var d = new Distribution([[10, nulls], [90, otherGen]]);
+            var d = new Distribution([[10, nulls()], [90, otherGen]]);
       return {
-          arb: function (size) {
+          func: function (size) {
                   return util.generateValue(d.pick(), size);
               },
           shrink: function (size, a) {
@@ -560,16 +563,18 @@ var qc = null;
   };
   exports.mod = function(a, fn) {
       return {
-          arb: function (size) {
+          func: function (size) {
               return fn(util.generateValue(a, size));
           }
       };
   };
-  var undefineds = exports.undefineds = chooseValue(undefined);
+  var undefineds = exports.undefineds = function(){
+    return chooseValue(undefined);
+  };
   exports.undefinedOr = function(opt) {
-      var d = new Distribution([[10, undefineds], [90, opt]]);
+      var d = new Distribution([[10, undefineds()], [90, opt]]);
       return {
-          arb: function (size) {
+          func: function (size) {
               return util.generateValue(d.pick(), size);
           },
           shrink: function (size, a) {
@@ -584,8 +589,9 @@ var qc = null;
 
 ;var __generator_number=( function(random, base) {
   var exports = {};
-  exports.integers = {
-      arb: function(size){
+  exports.integers = function(){
+    return {
+      func: function(size){
         var ret = random.getInteger(size);
         return ret;
       },
@@ -596,17 +602,18 @@ var qc = null;
           }
           while (true) {
               tmp = tmp / 2;
-              if (tmp === 0) {
-                  break;
+              if (tmp === 0 || isNaN(tmp)){                   break;
               }
               tmp = tmp < 0 ? Math.ceil(tmp) : Math.floor(tmp);
               ret.push(x - tmp);
           }
           return ret;
       }
+    };
   };
-  exports.positiveIntegers = {
-      arb: random.getPositiveInteger,
+  exports.positiveIntegers = function(){
+    return {
+      func: random.getPositiveInteger,
       shrink: function (size, x) {
           var tmp = x, ret = [];
           while (true) {
@@ -617,9 +624,11 @@ var qc = null;
           }
           return ret;
       }
+    };
   };
-  exports.floats = {
-      arb: random.getFloat,
+  exports.floats = function(){
+    return {
+      func: random.getFloat,
       shrink: function (size, x) {
           var tmp, ret = [];
           if (x < 0) {
@@ -631,6 +640,7 @@ var qc = null;
           if (tmp !== x) ret.push(tmp);
           return ret;
       }
+    };
   };
   exports.range = function(minValue, maxValue) {
     var min = Math.min(minValue, maxValue);
@@ -638,16 +648,16 @@ var qc = null;
     var generator = function() {
       return Math.floor(Math.random() * (max - min)) + min;
     };
-    return { arb: generator };
+    return { func: generator };
   };
   return exports;
 })(__random,__generator_base);
 
 ;var __generator_string=(function(base, number, util) {
   var exports = {};
-  exports.strings = (function() {
+  exports.strings = function(){
       var a = base.arrays(number.range(32, 255));
-      var arb = function (size) {
+      var func = function (size) {
                     var tmp = util.generateValue(a, size+10);
           return String.fromCharCode.apply(String, tmp);
       };
@@ -663,12 +673,14 @@ var qc = null;
           }
           return ret;
       };
-      return { arb: arb, shrink: shrink };
-  })();
-  exports.chararcters = base.mod(
-    number.range(32, 255),
-    function (num) { return String.fromCharCode(num); }
-  );
+      return { func: func, shrink: shrink };
+  };
+  exports.chararcters = function(){
+    return base.mod(
+      number.range(32, 255),
+      function (num) { return String.fromCharCode(num); }
+    );
+  };
   exports.nonEmptys = {
   };
   return exports;
