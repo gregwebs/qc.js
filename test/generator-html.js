@@ -3,7 +3,8 @@
   // Make it work in node.js and in the browser, with both requires.
   if (typeof exports != 'undefined'){
     var qc = require('../dist/qc.js').qc;
-    main(qc);
+    var qc_generator_html = require('../dist/qc-generator-html.js').qc_generator_html;
+    main(qc, qc_generator_html.color);
   } else {
     define([
       'qc',
