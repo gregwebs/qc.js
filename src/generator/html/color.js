@@ -1,4 +1,4 @@
-define([
+define('generator/html/color', [
   'qc',
   'generator/html/_util'
 ], function(qc, util){
