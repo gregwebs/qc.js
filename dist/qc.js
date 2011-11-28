@@ -686,7 +686,7 @@ var qc = null;
   return exports;
 })(__generator_base,__generator_number,__util);
 
-;var __generator=( function(base, number, string) {
+;var __generator___all__=( function(base, number, string) {
       var modules = {
     'number': number,
     'string': string
@@ -694,7 +694,7 @@ var qc = null;
     for (var i in base){
     modules[i] = base[i];
   }
-  return {generator:modules};
+  return modules;
 })(__generator_base,__generator_number,__generator_string);
 
 ;var __Prop=(function(qs, util, Case, Distribution, Fail, Stats) {
@@ -790,16 +790,22 @@ var qc = null;
   return Prop;
 })(__core,__util,__Case,__Distribution,__Fail,__Stats);
 
-;var __qc=( function() {
-  var exports = {};
-  var args = [].splice.call(arguments, 0);
-  args.map(function(arg){
-        if (typeof arg == 'function'){
-      exports[arg.name] = arg;
-    } else {
-            for (var prop in arg){
-        exports[prop] = arg[prop];
-      }
+;var __qc=( function(
+  core, random, util,
+  generator,
+  Config, Distribution, Prop, ConsoleListener, HtmlListener, NodeConsoleListener){
+  var exports = {
+    Config: Config,
+    Distribution: Distribution,
+    Prop: Prop,
+    ConsoleListener: ConsoleListener,
+    HtmlListener: HtmlListener,
+    NodeConsoleListener: NodeConsoleListener,
+    generator: generator
+  };
+  [core, random, util].map(function(arg){
+        for (var prop in arg){
+      exports[prop] = arg[prop];
     }
   });
   exports.declare = function(name, gens, body) {
@@ -808,9 +814,10 @@ var qc = null;
       return theProp;
   };
   return exports;
-})(__core,__random,__util,__generator,__Config,__Distribution,__Prop,__ConsoleListener,__HtmlListener,__NodeConsoleListener);
+})(__core,__random,__util,__generator___all__,__Config,__Distribution,__Prop,__ConsoleListener,__HtmlListener,__NodeConsoleListener);
 
 
 qc = __qc;
 })();
 if (typeof exports!='undefined') exports.qc = qc;
+if (typeof define!='undefined') define('qc', function(){return qc});
