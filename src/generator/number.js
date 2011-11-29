@@ -9,8 +9,9 @@ define('generator/number', [
    *
    * @constant
    */
-  exports.integers = {
-      arb: function(size){
+  exports.integers = function(){
+    return {
+      func: function(size){
         var ret = random.getInteger(size);
         return ret;
       },
@@ -22,7 +23,7 @@ define('generator/number', [
 
           while (true) {
               tmp = tmp / 2;
-              if (tmp === 0) {
+              if (tmp === 0 || isNaN(tmp)){ // If tmp is not a number quit too, should not happen.
                   break;
               }
 
@@ -31,6 +32,7 @@ define('generator/number', [
           }
           return ret;
       }
+    };
   };
 
   /**
@@ -39,8 +41,9 @@ define('generator/number', [
    *
    * @constant
    */
-  exports.positiveIntegers = {
-      arb: random.getPositiveInteger,
+  exports.positiveIntegers = function(){
+    return {
+      func: random.getPositiveInteger,
       shrink: function (size, x) {
           var tmp = x, ret = [];
           while (true) {
@@ -51,6 +54,7 @@ define('generator/number', [
           }
           return ret;
       }
+    };
   };
 
   /**
@@ -60,8 +64,9 @@ define('generator/number', [
    *
    * @constant
    */
-  exports.floats = {
-      arb: random.getFloat,
+  exports.floats = function(){
+    return {
+      func: random.getFloat,
       shrink: function (size, x) {
           var tmp, ret = [];
 
@@ -76,6 +81,7 @@ define('generator/number', [
 
           return ret;
       }
+    };
   };
 
   exports.range = function(minValue, maxValue) {
@@ -84,7 +90,7 @@ define('generator/number', [
     var generator = function() {
       return Math.floor(Math.random() * (max - min)) + min;
     };
-    return { arb: generator };
+    return { func: generator };
   };
 
   return exports;

@@ -2,6 +2,7 @@
 if (typeof exports!='undefined') {  var __qc = require('./qc.js').qc;} else {  var __qc = qc;};var __generator_html__util=( function(qc){
   var exports = {};
   exports.getHexNumber = function(length){
+<<<<<<< HEAD
     var vals = [];
     for (var i=0; i<Math.ceil(length/2); i++){ vals.push(qc.getPositiveInteger(255)); };
     var digits = vals.map(function(val){ return ('0' + val.toString(16)).slice(-2); }).join('');
@@ -9,6 +10,17 @@ if (typeof exports!='undefined') {  var __qc = require('./qc.js').qc;} else {  v
   };
   var colorNames = [
     'none',
+=======
+    var generator = function(){
+      var vals = [];
+      for (var i=0; i<Math.ceil(length/2); i++){ vals.push(qc.getPositiveInteger(255)); };
+      var digits = vals.map(function(val){ return ('0' + val.toString(16)).slice(-2); }).join('');
+      return digits.slice(0, length);
+    };
+    return { func:generator };
+  };
+  var colorNames = [
+>>>>>>> master
     'Aqua', 'Aquamarine',
     'Blue', 'BlueViolet',
     'CadetBlue', 'Chartreuse', 'Coral', 'CornflowerBlue', 'Crimson', 'Cyan',
@@ -40,9 +52,18 @@ if (typeof exports!='undefined') {  var __qc = require('./qc.js').qc;} else {  v
     'Yellow', 'YellowGreen'
   ];
   exports.getRandomColorName = function(){
+<<<<<<< HEAD
     var len = colorNames.length;
     var index = Math.round(Math.random() * (len-1));
     return colorNames[index];
+=======
+    var generator = function(){
+      var len = colorNames.length;
+      var index = Math.round(Math.random() * (len-1));
+      return colorNames[index];
+    };
+    return { func:generator };
+>>>>>>> master
   };
   return exports;
 })(__qc);
@@ -53,25 +74,38 @@ if (typeof exports!='undefined') {  var __qc = require('./qc.js').qc;} else {  v
   exports.hexUpperCases = function(size){
     return {
       func: function(){
+<<<<<<< HEAD
         return '#' + util.getHexNumber(size).toUpperCase();
+=======
+        return qc.generateValue(util.getHexNumber(size)).toUpperCase();
+>>>>>>> master
       }
     };
   };
   exports.hexLowerCases = function(size){
     return {
       func: function(){
+<<<<<<< HEAD
         return '#' + util.getHexNumber(size).toLowerCase();
+=======
+        return qc.generateValue(util.getHexNumber(size)).toLowerCase();
+>>>>>>> master
       }
     };
   };
   exports.hexMixedCases = function(size){
     return {
       func: function(){
+<<<<<<< HEAD
         var ret = util.getHexNumber(size);
+=======
+        var ret = qc.generateValue(util.getHexNumber(size));
+>>>>>>> master
                 ret = ret.split('').map(function(char){
                     var func = Math.round(Math.random()) ? 'toLowerCase' : 'toUpperCase';
           return char[func]();
         });
+<<<<<<< HEAD
         return '#' + ret.join('');
       }
     };
@@ -107,6 +141,13 @@ if (typeof exports!='undefined') {  var __qc = require('./qc.js').qc;} else {  v
       }
     }
   };
+=======
+        return ret.join('');
+      }
+    };
+  };
+  exports.colorNames = util.getRandomColorName();
+>>>>>>> master
   exports.hexColors = function(size){
     return {
       func: function(){
@@ -120,6 +161,7 @@ if (typeof exports!='undefined') {  var __qc = require('./qc.js').qc;} else {  v
       }
     };
   };
+<<<<<<< HEAD
   exports.any = function(){
     return {
       func: function(){
@@ -134,6 +176,14 @@ if (typeof exports!='undefined') {  var __qc = require('./qc.js').qc;} else {  v
       }
     }
   };
+=======
+  exports.colors = qc.generateValue(
+    gen.chooseGenerator(
+      exports.hexColors(3),
+      exports.hexColors(6)
+    )
+  );
+>>>>>>> master
   return exports;
 })(__qc,__generator_html__util);
 

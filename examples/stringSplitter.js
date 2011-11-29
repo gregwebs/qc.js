@@ -28,7 +28,7 @@
     // Here we create the function that we pass to our test.
     // This function creates an non-empty array of strings, which will be
     // our words that shall be joined and split.
-    var words = gen.nonEmptyArrays(gen.string.strings);
+    var words = gen.nonEmptyArrays(gen.string.strings());
 
     // Define the test property (that's what its called in the quickcheck world).
     // The following is the function that will be executed a defined number of times (100 in our case),
@@ -47,8 +47,6 @@
         testCase.assert( ''+value == ''+splitResult );
       }
     );
-
-
 
     /**
      * Return an array of characters that are not contained in the

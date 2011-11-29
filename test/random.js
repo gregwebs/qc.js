@@ -7,20 +7,24 @@
     define(['qc'], main);
   }
 
-  var main = function(qc){
-    qc.declare("random integer", [qc.getInteger],
+  function makeGenerator(func){
+    return { func:func }
+  }
+
+  function main(qc){
+    qc.declare("random integer", [makeGenerator(qc.getInteger)],
       function(c, a) {
         c.assert(!isNaN(a) && parseInt(a)===a);
       }
     );
 
-    qc.declare("random positive integer", [qc.getPositiveInteger],
+    qc.declare("random positive integer", [makeGenerator(qc.getPositiveInteger)],
       function(c, a) {
         c.assert(!isNaN(a) && parseInt(a)===a && a >= 0);
       }
     );
 
-    qc.declare("random float", [qc.getFloat],
+    qc.declare("random float", [makeGenerator(qc.getFloat)],
       function(c, a) {
         c.assert(!isNaN(a));
       }

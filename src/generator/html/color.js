@@ -1,4 +1,4 @@
-define([
+define('generator/html/color', [
   'qc',
   'generator/html/_util'
 ], function(qc, util){
@@ -30,7 +30,7 @@ define([
         ret = ret.split('').map(function(char){
           // Mix upper and lower case randomly.
           var func = Math.round(Math.random()) ? 'toLowerCase' : 'toUpperCase';
-          return char[func]()
+          return char[func]();
         });
         return '#' + ret.join('');
       }
@@ -74,7 +74,7 @@ define([
 
   exports.hexColors = function(size){
     return {
-      arb: function(){
+      func: function(){
         return qc.generateValue(
           gen.chooseGenerator(
             exports.hexLowerCases(size),

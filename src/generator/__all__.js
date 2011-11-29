@@ -1,4 +1,4 @@
-define('generator', [
+define('generator/__all__', [
   'generator/base',
   'generator/number',
   'generator/string'
@@ -16,5 +16,5 @@ define('generator', [
     modules[i] = base[i];
   }
 
-  return {generator:modules};
+  return modules;
 });

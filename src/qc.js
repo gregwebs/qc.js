@@ -4,21 +4,26 @@
 
 define('qc', [
   'core', 'random', 'util',
-  'generator',
+  'generator/__all__',
   'Config', 'Distribution', 'Prop', 'ConsoleListener', 'HtmlListener', 'NodeConsoleListener'
-], function() {
+], function(
+  core, random, util,
+  generator,
+  Config, Distribution, Prop, ConsoleListener, HtmlListener, NodeConsoleListener){
 
-  var exports = {};
-  var args = [].splice.call(arguments, 0);
-  args.map(function(arg){
-    // Add the classes to "exports".
-    if (typeof arg == 'function'){
-      exports[arg.name] = arg;
-    } else {
-      // Add all properties to the exports, mostly its a collection of functions.
-      for (var prop in arg){
-        exports[prop] = arg[prop];
-      }
+  var exports = {
+    Config: Config,
+    Distribution: Distribution,
+    Prop: Prop,
+    ConsoleListener: ConsoleListener,
+    HtmlListener: HtmlListener,
+    NodeConsoleListener: NodeConsoleListener,
+    generator: generator
+  };
+  [core, random, util].map(function(arg){
+    // Add all properties to the exports, mostly its a collection of functions.
+    for (var prop in arg){
+      exports[prop] = arg[prop];
     }
   });
 

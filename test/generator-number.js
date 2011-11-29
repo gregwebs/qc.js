@@ -10,19 +10,19 @@
   function main(qc){
     var gen = qc.generator.number;
 
-    qc.declare("integers", [gen.integers],
+    qc.declare("integers", [gen.integers()],
       function(testCase, value) {
         testCase.assert(parseInt(value) === value);
       }
     );
 
-    qc.declare("positive integers", [gen.positiveIntegers],
+    qc.declare("positive integers", [gen.positiveIntegers()],
       function(testCase, value) {
         testCase.assert(parseInt(value) === value && value >= 0);
       }
     );
 
-    qc.declare("floats", [gen.floats],
+    qc.declare("floats", [gen.floats()],
       function(testCase, value) {
         testCase.assert(parseFloat(value) === value);
       }

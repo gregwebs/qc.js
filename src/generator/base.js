@@ -10,7 +10,7 @@ define('generator/base', [
   exports.chooseGenerator = function(/** generators... */) {
     var d = Distribution.uniform(arguments);
     return {
-      arb: function (size) {
+      func: function (size) {
           return util.generateValue(d.pick(), size);
       },
       shrink: null
@@ -24,7 +24,7 @@ define('generator/base', [
   var chooseValue = exports.chooseValue = function(/** values... */) {
     var d = Distribution.uniform(arguments);
     return {
-      arb: function () {
+      func: function () {
         return d.pick();
       }
     };
@@ -35,14 +35,18 @@ define('generator/base', [
    *
    * @constant
    */
-  exports.booleans = chooseValue(false, true);
+  exports.booleans = function(){
+    return chooseValue(false, true);
+  };
 
   /**
    * Null generator. Always generates 'null'.
    *
    * @constant
    */
-  var nulls = exports.nulls = chooseValue(null);
+  var nulls = exports.nulls = function(){
+    return chooseValue(null);
+  };
 
   /**
    * Array generator. Generates array of arbitrary length with given generator.
@@ -64,7 +68,7 @@ define('generator/base', [
       }
       return list;
     };
-    return { arb: generatorFunc, shrink: shrinkStrategy || arrShrinkOne };
+    return { func: generatorFunc, shrink: shrinkStrategy || arrShrinkOne };
   };
 
   /**
@@ -79,7 +83,7 @@ define('generator/base', [
     var generator = function(size) {
       return generators.map(function(g){ return util.generateValue(g, size); });
     };
-    return { arb: generator, shrink: shrinkStrategy || arrShrinkOne };
+    return { func: generator, shrink: shrinkStrategy || arrShrinkOne };
   };
 
   /**
@@ -98,17 +102,19 @@ define('generator/base', [
    *
    * @constant
    */
-  exports.dates = {
-      arb: function () {
+  exports.dates = function(){
+    return {
+      func: function () {
           return new Date();
       }
+    };
   };
 
   exports.nullOr = function(otherGen) {
       //return arbSelect(otherGen, arbNull);
-      var d = new Distribution([[10, nulls], [90, otherGen]]);
+      var d = new Distribution([[10, nulls()], [90, otherGen]]);
       return {
-          arb: function (size) {
+          func: function (size) {
                   return util.generateValue(d.pick(), size);
               },
           shrink: function (size, a) {
@@ -155,7 +161,7 @@ define('generator/base', [
    */
   exports.mod = function(a, fn) {
       return {
-          arb: function (size) {
+          func: function (size) {
               return fn(util.generateValue(a, size));
           }
       };
@@ -166,12 +172,14 @@ define('generator/base', [
    *
    * @constant
    */
-  var undefineds = exports.undefineds = chooseValue(undefined);
+  var undefineds = exports.undefineds = function(){
+    return chooseValue(undefined);
+  };
 
   exports.undefinedOr = function(opt) {
-      var d = new Distribution([[10, undefineds], [90, opt]]);
+      var d = new Distribution([[10, undefineds()], [90, opt]]);
       return {
-          arb: function (size) {
+          func: function (size) {
               return util.generateValue(d.pick(), size);
           },
           shrink: function (size, a) {

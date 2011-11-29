@@ -10,18 +10,22 @@
   function main(qc){
     var gen = qc.generator;
 
+    function makeGenerator(func){
+      return { func:func }
+    }
+
     var distributionArrays = function(){
       return qc.generateValue(gen.nonEmptyArrays( // Generate an array with at least one of the following elements.
         gen.arraysOfSize( // Generate an array with a fixed size with the two following elements.
           [
             gen.number.range(1, 1000), // First element is always a number, the probability.
-            gen.string.strings // Second element is always a string, the value.
+            gen.string.strings() // Second element is always a string, the value.
           ]
         )
-      ));
+      ))
     };
 
-    qc.declare("getProbablity", [distributionArrays],
+    qc.declare("getProbablity", [makeGenerator(distributionArrays)],
       function(testCase, value) {
         var d = new qc.Distribution(value);
         // Sum up all probabilities.
@@ -32,7 +36,7 @@
       }
     );
 
-    qc.declare("normalize", [distributionArrays],
+    qc.declare("normalize", [makeGenerator(distributionArrays)],
       function(testCase, value) {
         var d = new qc.Distribution(value);
         var sum = d.data.reduce(function(last, curArr){ return last+curArr[0] }, 0);
@@ -41,7 +45,7 @@
       }
     );
 
-    qc.declare("mostProbable", [distributionArrays],
+    qc.declare("mostProbable", [makeGenerator(distributionArrays)],
       function(testCase, value) {
         var d = new qc.Distribution(value);
         var highestProbability = d.data.reduce(function(last, curArr){ return curArr[0] > last[0] ? curArr : last; }, [0]);
@@ -50,7 +54,7 @@
       }
     );
 
-    qc.declare("uniform", [distributionArrays],
+    qc.declare("uniform", [makeGenerator(distributionArrays)],
       function(testCase, value) {
         var d = new qc.Distribution.uniform(value);
         // Get all probabilities into the array allProbs.

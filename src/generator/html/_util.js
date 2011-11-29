@@ -1,4 +1,4 @@
-define([
+define('generator/html/_util', [
   'qc'
 ], function(qc){
 

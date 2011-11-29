@@ -9,16 +9,12 @@
     </script>
     <script type="text/javascript" src="../lib/requirejs/require.js"></script>
     <script type="text/javascript" src="../dist/qc.js"></script>
+    <script type="text/javascript" src="../dist/qc-generator-html.js"></script>
   </head>
   <body>
     <div>There should be a Firebug console present with results below.</div>
     <div id=testresults></div>
     <script type="text/javascript">
-      // We have to define those we wanna use, dummy-wise, so require wont try to load them.
-      define('qc', function(){return qc});
-      define('random', function(){return qc});
-      define('HtmlListener', function(){return qc.HtmlListener});
-
       window.onload = function(){
         require(['../test/browser-tests.js']);
 // create a Listener, that converts intentionally failing tests into passing results.
