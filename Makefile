@@ -54,7 +54,7 @@ endif
 default: build
 
 jshint: mktemp
-	jshint ${WORKSPACE}/src/ --config ${CI_TOOLS_DIR}/config/jshint.json > ${TEMP_DIR}/jshint-report.txt
+	- jshint ${WORKSPACE}/src/ --config ${CI_TOOLS_DIR}/config/jshint.json > ${TEMP_DIR}/jshint-report.txt
 
 coverage-phantom: mktemp
 	${CI_TOOLS_DIR}/bin/coverage_phantom.sh ${TEST_RUNNER} ${WORKSPACE}
