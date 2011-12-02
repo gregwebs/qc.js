@@ -8,10 +8,11 @@ define('Config', function() {
    *
    * @class
    */
-  function Config(pass, invalid, maxShrink) {
-      this.maxPass = pass;
-      this.maxInvalid = invalid;
-      this.maxShrink = arguments.length < 3 ? 3 : maxShrink;
+  function Config(params) {
+    this.maxPass = params.pass || 100;
+    this.maxInvalid = params.invalid || 10;
+    this.maxShrink = typeof params.maxShrink == 'undefined' ? 3 : params.maxShrink;
+    this.searchString = params.searchString || '';
   }
 
   /**

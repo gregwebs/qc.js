@@ -97,8 +97,8 @@ define('Prop', [
    * @return depending on test result a Pass, Fail or Invalid object
    */
   Prop.prototype.run = function (config) {
-      var args, testCase, dist, shrunkArgs,
-          stats = new Stats(), size = 0, collected = [];
+      var args, testCase, dist, shrunkArgs;
+      var stats = new Stats(), size = 0, collected = [];
 
       while (config.needsWork(stats)) {
           args = this.generateArgs(size);

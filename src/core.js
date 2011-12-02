@@ -61,18 +61,20 @@ define('core', [
    * @param config The configuration for all the test runs.
    * @param listener The result reporter.
    */
-  exports.runAllProps = function(config, listener) {
+  exports.runProps = function(config, listener) {
     var once, i = 0;
     listener = typeof listener == 'undefined' ? new ConsoleListener() : listener;
+
+    var propsToRun = filterProps(config.searchString);
 
     if (typeof setTimeout !== 'undefined') {
       // Use set timeout so listeners can draw in response to events.
       once = function () {
-        if (i >= allProps.length) {
+        if (i >= propsToRun.length) {
           listener.done();
           return;
         }
-        var currentProp = allProps[i];
+        var currentProp = propsToRun[i];
         var result = currentProp.run(config);
         listener.noteResult(result);
         i += 1;
@@ -80,11 +82,21 @@ define('core', [
       };
       once();
     } else {
-      for (; i < allProps.length; i++) {
-        listener.noteResult(allProps[i].run(config));
+      for (; i < propsToRun.length; i++) {
+        listener.noteResult(propsToRun[i].run(config));
       }
     }
   };
+
+  function filterProps(searchString){
+    if (!searchString){
+      return allProps;
+    }
+    var searchFor = searchString.toLowerCase();
+    return allProps.filter(function(prop){
+      return prop.name.toLowerCase().indexOf(searchFor) != -1;
+    });
+  }
 
   // some starter generators and support utilities.
 
