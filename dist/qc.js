@@ -40,10 +40,11 @@ var qc = null;
 })();
 
 ;var __Config=( function() {
-  function Config(pass, invalid, maxShrink) {
-      this.maxPass = pass;
-      this.maxInvalid = invalid;
-      this.maxShrink = arguments.length < 3 ? 3 : maxShrink;
+  function Config(params) {
+    this.maxPass = params.maxPass || 100;
+    this.maxInvalid = params.maxInvalid || 10;
+    this.maxShrink = typeof params.maxShrink == 'undefined' ? 3 : params.maxShrink;
+    this.searchString = params.searchString || '';
   }
   Config.prototype.needsWork = function (count) {
       return count.invalid < this.maxInvalid &&
@@ -58,16 +59,12 @@ var qc = null;
   }
   ConsoleListener.prototype.noteResult = function (result) {
       var i, tags, tag, distr, d;
-      var statusString = result.status + ': ' + result.name;
       if (result.status === 'pass') {
-          this.passed(result);
-                } else {
-          this.invalid(statusString);
-          this.log(result);
-      }
-      if (result.status === 'fail') {
-          this.failure('Failed case:');
-          this.log(result.failedCase);
+        this.passed(result);
+      } else if (result.status === 'fail') {
+        this.failure(result);
+      } else {
+        this.invalid(result);
       }
             tags = result.stats.tags;
       if (tags && tags.length > 0) {
@@ -118,25 +115,25 @@ var qc = null;
 })();
 
 ;var __HtmlListener=( function(ConsoleListener) {
-  function HtmlListener(nodeId, showPasses) {
+  function HtmlListener(params) {
     this.maxCollected = 0;
-    this._showPasses = showPasses;
-    this._domNode = document.getElementById(nodeId);
+    this._showPassedTests = params.showPassedTests || true;
+    this._domNode = document.getElementById(params.nodeId);
   }
   HtmlListener.prototype = new ConsoleListener();
   HtmlListener.prototype.passed = function (str) {
-    if (this._showPasses) {
-      this._domNode.innerHTML += str.status + ': ' + str.name + ' -- ' + JSON.stringify(str.stats) + '<br>';
+    if (this._showPassedTests) {
+      this._domNode.innerHTML += str + '<br>';
     }
   };
   HtmlListener.prototype.invalid = function (str) {
-    this._domNode.innerHTML += str;
+    this._domNode.innerHTML += str + '<br>';
   };
   HtmlListener.prototype.failure = function (str) {
     this._domNode.innerHTML += str + '<br>';
   };
   HtmlListener.prototype.log = function (str) {
-    this._domNode.innerHTML += str;
+    this._domNode.innerHTML += str + '<br>';
   };
   HtmlListener.prototype.done = function (str) {
     this._domNode.innerHTML += 'DONE.';
@@ -303,16 +300,17 @@ var qc = null;
     }
     return failedArgs.length === 0 ? null : failedArgs[0];
   };
-  exports.runAllProps = function(config, listener) {
+  exports.runProps = function(config, listener) {
     var once, i = 0;
     listener = typeof listener == 'undefined' ? new ConsoleListener() : listener;
+    var propsToRun = filterProps(config.searchString);
     if (typeof setTimeout !== 'undefined') {
             once = function () {
-        if (i >= allProps.length) {
+        if (i >= propsToRun.length) {
           listener.done();
           return;
         }
-        var currentProp = allProps[i];
+        var currentProp = propsToRun[i];
         var result = currentProp.run(config);
         listener.noteResult(result);
         i += 1;
@@ -320,11 +318,28 @@ var qc = null;
       };
       once();
     } else {
-      for (; i < allProps.length; i++) {
-        listener.noteResult(allProps[i].run(config));
+      for (; i < propsToRun.length; i++) {
+        listener.noteResult(propsToRun[i].run(config));
       }
     }
   };
+  function filterProps(searchString){
+    var ret = [];
+    if (!searchString){
+            ret = allProps;
+    }else if (searchString.match(/^\/.*\/$/)){
+            var regexp = new RegExp(searchString.slice(1, -1));
+      ret = allProps.filter(function(prop){
+        return prop.name.match(regexp);
+      });
+    } else {
+            var searchFor = searchString.toLowerCase();
+      ret = allProps.filter(function(prop){
+        return prop.name.toLowerCase().indexOf(searchFor) != -1;
+      });
+    }
+    return ret;
+  }
     exports.frequency = function() {
     var d = new Distribution(arguments);
     return function () {
@@ -515,7 +530,7 @@ var qc = null;
     var generator = function(size) {
       return generators.map(function(g){ return util.generateValue(g, size); });
     };
-    return { func: generator, shrink: shrinkStrategy || arrShrinkOne };
+    return { func: generator, shrink: shrinkStrategy };
   };
   exports.nonEmptyArrays = function(generator, shrinkStrategy){
     return arrays(generator, shrinkStrategy, 1);
@@ -756,8 +771,8 @@ var qc = null;
       return newArgs;
   };
   Prop.prototype.run = function (config) {
-      var args, testCase, dist, shrunkArgs,
-          stats = new Stats(), size = 0, collected = [];
+      var args, testCase, dist, shrunkArgs;
+      var stats = new Stats(), size = 0, collected = [];
       while (config.needsWork(stats)) {
           args = this.generateArgs(size);
           testCase = new Case(args);
