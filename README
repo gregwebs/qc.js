@@ -1,3 +1,29 @@
+qc.js
+=====
+This is a JavaScript implementation.
+This fork is mainly a resort and over time it became a partly refactored
+qc.js and provides a little more understandable structure imho.
+It can run on node.js and in the browser by building it using the
+build tools in the tools directory.
+
+What is qc.js
+=============
+I have collected a couple of links right here:
+http://delicious.com/wolframkriesing/quickcheck
+QuickCheck comes from Haskell and allows for thourough testing using
+random values and applying strategies to find the smallest failing
+test cases. A test case just takes a number of generators, that
+specify what kind of values are given to the test function, not the
+values themselves but functions to generate the values. The easiest
+is a random number, which means you can test your code using this
+number and define the according expectation. Every test run generates
+more and more different values the test is executed with.
+
+
+
+
+
+Old documentation, from the original qc.js, where this is forked off.
 
 JS Quickcheck Features
 ======================
