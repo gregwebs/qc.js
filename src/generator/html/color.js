@@ -6,6 +6,29 @@ define('generator/html/color', [
   var gen = qc.generator;
   var exports = {};
 
+  exports.any = function(){
+    return {
+      func: function(){
+        return qc.generateValue(gen.chooseGenerator(
+          exports.hexColors(3),
+          exports.hexColors(6),
+          exports.names(),
+          exports.nameUpperCases(),
+          exports.nameLowerCases(),
+          exports.nameRandomCases(),
+          exports.rgb(),
+          exports.rgbaPercent(),
+          exports.rgba(),
+          exports.rgbaPercent()
+//          exports.hsb(),
+//          exports.hsbaPercent(),
+//          exports.hsba(),
+//          exports.hsbaPercent()
+        ));
+      }
+    }
+  };
+
   exports.hexUpperCases = function(size){
     return {
       func: function(){
@@ -33,6 +56,20 @@ define('generator/html/color', [
           return char[func]();
         });
         return '#' + ret.join('');
+      }
+    };
+  };
+
+  exports.hexColors = function(size){
+    return {
+      func: function(){
+        return qc.generateValue(
+          gen.chooseGenerator(
+            exports.hexLowerCases(size),
+            exports.hexUpperCases(size),
+            exports.hexMixedCases(size)
+          )
+        );
       }
     };
   };
@@ -72,34 +109,78 @@ define('generator/html/color', [
     }
   };
 
-  exports.hexColors = function(size){
+  exports.rgb = function(){
     return {
       func: function(){
-        return qc.generateValue(
-          gen.chooseGenerator(
-            exports.hexLowerCases(size),
-            exports.hexUpperCases(size),
-            exports.hexMixedCases(size)
-          )
-        );
+        var vals = [qc.getPositiveInteger(255), qc.getPositiveInteger(255), qc.getPositiveInteger(255)];
+        return 'rgb(' + vals.join(',') + ')';
       }
     };
   };
 
-  exports.any = function(){
+  exports.rgbPercent = function(){
     return {
       func: function(){
-        return qc.generateValue(gen.chooseGenerator(
-          exports.hexColors(3),
-          exports.hexColors(6),
-          exports.names(),
-          exports.nameUpperCases(),
-          exports.nameLowerCases(),
-          exports.nameRandomCases()
-        ));
+        var vals = [qc.getPositiveInteger(100), qc.getPositiveInteger(100), qc.getPositiveInteger(100)];
+        return 'rgb(' + vals.join('%,') + '%)';
       }
-    }
+    };
   };
 
+  exports.rgba = function(){
+    return {
+      func: function(){
+        var vals = [qc.getPositiveInteger(255), qc.getPositiveInteger(255), qc.getPositiveInteger(255), qc.getFloat()];
+        return 'rgba(' + vals.join(',') + ')';
+      }
+    };
+  };
+
+  exports.rgbaPercent = function(){
+    return {
+      func: function(){
+        var vals = [qc.getPositiveInteger(100), qc.getPositiveInteger(100), qc.getPositiveInteger(100), qc.getFloat()];
+        return 'rgba(' + vals.join('%,') + ')';
+      }
+    };
+  };
+
+/*  exports.hsb = function(){
+    return {
+      func: function(){
+        var vals = [qc.getFloat(), qc.getFloat(), qc.getFloat()];
+        return 'hsb(' + vals.join(',') + ')';
+      }
+    };
+  };
+
+  exports.hsbPercent = function(){
+    return {
+      func: function(){
+        var vals = [qc.getPositiveInteger(100), qc.getPositiveInteger(100), qc.getPositiveInteger(100)];
+        return 'hsb(' + vals.join('%,') + '%)';
+      }
+    };
+  };
+
+  exports.hsba = function(){
+    return {
+      func: function(){
+        var vals = [qc.getFloat(), qc.getFloat(), qc.getFloat(), qc.getFloat()];
+        return 'hsba(' + vals.join(',') + ')';
+      }
+    };
+  };
+
+  exports.hsbaPercent = function(){
+    return {
+      func: function(){
+        var vals = [qc.getPositiveInteger(100), qc.getPositiveInteger(100), qc.getPositiveInteger(100), qc.getFloat()];
+        return 'hsba(' + vals.join('%,') + ')';
+      }
+    };
+  };
+  //*/
+  
   return exports;
 });
