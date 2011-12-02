@@ -89,13 +89,24 @@ define('core', [
   };
 
   function filterProps(searchString){
+    var ret = [];
     if (!searchString){
-      return allProps;
+      // No search string given.
+      ret = allProps;
+    }else if (searchString.match(/^\/.*\/$/)){
+      // The search string is a regular expression, it starts and ends with "/".
+      var regexp = new RegExp(searchString.slice(1, -1));
+      ret = allProps.filter(function(prop){
+        return prop.name.match(regexp);
+      });
+    } else {
+      // The search string is a pure stirng.
+      var searchFor = searchString.toLowerCase();
+      ret = allProps.filter(function(prop){
+        return prop.name.toLowerCase().indexOf(searchFor) != -1;
+      });
     }
-    var searchFor = searchString.toLowerCase();
-    return allProps.filter(function(prop){
-      return prop.name.toLowerCase().indexOf(searchFor) != -1;
-    });
+    return ret;
   }
 
   // some starter generators and support utilities.
