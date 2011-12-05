@@ -86,21 +86,29 @@ define('Prop', [
                   break;
               }
           }
-      }
-      // If a max number of shrunk args is given reduce the newArgs array down to that number.
-      if (maxShrunkArgs && newArgs.length>maxShrunkArgs){
+      };
+      return reduceToMaxShrunkArgs(newArgs, maxShrunkArgs);
+  };
+
+  /** If a max number of shrunk shrunkArgs is given reduce the shrunkArgs array down to that number.
+   *
+   * @param shrunkArgs {Array} The shrunk arguments list.
+   * @param maxShrunkArgs {Integer} The max number of shrunk args to provide as input to the shrink method.
+   */
+  function reduceToMaxShrunkArgs(shrunkArgs, maxShrunkArgs){
+      if (maxShrunkArgs && shrunkArgs.length>maxShrunkArgs){
         // Since we ceil the result here, we may end up with less than 100, but that's ok,
-        // the more newArgs we had before the closer we get to the 100, and the less
+        // the more shrunkArgs we had before the closer we get to the 100, and the less
         // the smaller the number also gets, which means the relevance is high enough.
-        var everyXth = Math.ceil(newArgs.length / maxShrunkArgs);
+        var everyXth = Math.ceil(shrunkArgs.length / maxShrunkArgs);
         var ret = [];
-        for (var i=0; i<newArgs.length; i+=everyXth){
-          ret.push(newArgs[i]);
+        for (var i=0; i<shrunkArgs.length; i+=everyXth){
+          ret.push(shrunkArgs[i]);
         }
-        newArgs = ret;
+        shrunkArgs = ret;
       }
 
-      return newArgs;
+      return shrunkArgs;
   };
 
   /**
@@ -126,7 +134,7 @@ define('Prop', [
                           testCase.collected.length === 0 ?  null :
                               new Distribution(testCase.collected);
 
-                  shrunkArgs = qs.shrinkLoop(config, this, size, args);
+                  shrunkArgs = this._shrinkLoop(config, size, args);
                   return new Fail(this, stats, args, shrunkArgs,
                                   testCase.tags, dist);
               } else if (e === 'InvalidCase') {
@@ -144,6 +152,45 @@ define('Prop', [
                           new Distribution(collected);
 
       return stats.newResult(this);
+  };
+
+  /**
+   * @private
+   */
+  Prop.prototype._shrinkLoop = function(config, size, args) {
+    var i, testCase;
+    var failedArgs = [args], shrunkArgs = [];
+    for (var loop = 0; loop < config.maxShrink; loop++) {
+      // Create shrunk argument lists from failed arguments.
+      shrunkArgs = [];
+      for (i = 0; i < failedArgs.length; i++) {
+        shrunkArgs = shrunkArgs.concat(
+          this.generateShrunkArgs(size, failedArgs[i], config.maxShrunkArgs));
+      }
+      if (shrunkArgs.length === 0) {
+        return failedArgs.length === 0 ? null : failedArgs[0];
+      }
+      // Create new failed arguments from shrunk ones by running the property.
+      failedArgs = [];
+      for (i = 0; i < shrunkArgs.length; i++) {
+        try {
+          testCase = new Case(shrunkArgs[i]);
+          this.body.apply(this, [testCase].concat(shrunkArgs[i]));
+        } catch (e) {
+          if (e === 'InvalidCase') {
+          } else if (e === 'AssertFailed') {
+            if (loop === config.maxShrink - 1) {
+              return shrunkArgs[i];
+            } else {
+              failedArgs.push(shrunkArgs[i]);
+            }
+          } else {
+            throw e;
+          }
+        }
+      }
+    }
+    return failedArgs.length === 0 ? null : failedArgs[0];
   };
 
   return Prop;

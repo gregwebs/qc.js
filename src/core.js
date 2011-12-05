@@ -17,45 +17,6 @@ define('core', [
   };
 
   /**
-   * @private
-   */
-  exports.shrinkLoop = function(config, prop, size, args) {
-    var i, testCase;
-    var failedArgs = [args], shrunkArgs = [];
-    for (var loop = 0; loop < config.maxShrink; loop++) {
-      // Create shrunk argument lists from failed arguments.
-      shrunkArgs = [];
-      for (i = 0; i < failedArgs.length; i++) {
-        shrunkArgs = shrunkArgs.concat(
-          prop.generateShrunkArgs(size, failedArgs[i], config.maxShrunkArgs));
-      }
-      if (shrunkArgs.length === 0) {
-        return failedArgs.length === 0 ? null : failedArgs[0];
-      }
-      // Create new failed arguments from shrunk ones by running the property.
-      failedArgs = [];
-      for (i = 0; i < shrunkArgs.length; i++) {
-        try {
-          testCase = new Case(shrunkArgs[i]);
-          prop.body.apply(prop, [testCase].concat(shrunkArgs[i]));
-        } catch (e) {
-          if (e === 'InvalidCase') {
-          } else if (e === 'AssertFailed') {
-            if (loop === config.maxShrink - 1) {
-              return shrunkArgs[i];
-            } else {
-              failedArgs.push(shrunkArgs[i]);
-            }
-          } else {
-            throw e;
-          }
-        }
-      }
-    }
-    return failedArgs.length === 0 ? null : failedArgs[0];
-  };
-
-  /**
    * All tests that had been defined by qc.declare() are executed
    * by this function.
    * @param config The configuration for all the test runs.
