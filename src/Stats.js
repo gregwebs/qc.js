@@ -9,67 +9,84 @@ define('Stats', [
    * @class
    */
   function Stats() {
-      /**
-       * number of successful tests
-       * @field
-       * */
-      this.pass = 0;
+    this.counts = {
+      pass:0,
+      invalid:0,
+      fail:0
+    };
+    this.shrinkCounts = {
+      pass:0,
+      invalid:0,
+      fail:0
+    };
+    this.results = [];
+    this.shrinkResults = [];
 
-      /**
-       * number of failed tests
-       * @field
-       * */
-      this.invalid = 0;
+    /**
+     * List of tags (created by calling Case.classify) with counts.
+     * @field
+     */
+    this.tags = [];
+    /**
+     * Histogram of collected values (create by calling Case.collect)
+     * @field
+     */
+    this.collected = null;
 
-      /**
-       * list of tags (created by calling Case.classify) with counts
-       * @field
-       */
-      this.tags = [];
+    this.addInvalid = function(args){
+      this.counts.invalid++;
+      this.results.push({result:'invalid', args:args});
+    };
+    this.addPass = function(args){
+      this.counts.pass++;
+      this.results.push({result:'pass', args:args});
+    };
+    this.addFail = function(args){
+      this.counts.fail++;
+      this.results.push({result:'fail', args:args});
+    };
+    this.addShrinkInvalid = function(args){
+      this.shrinkCounts.invalid++;
+      this.shrinkResults.push({result:'invalid', args:args});
+    };
+    this.addShrinkPass = function(args){
+      this.shrinkCounts.pass++;
+      this.shrinkResults.push({result:'pass', args:args});
+    };
+    this.addShrinkFail = function(args){
+      this.shrinkCounts.fail++;
+      this.shrinkResults.push({result:'fail', args:args});
+    };
 
-      /**
-       * Histogram of collected values (create by calling Case.collect)
-       * @field
-       */
-      this.collected = null;
-  }
-
-  Stats.prototype.incrementInvalid = function () {
-      this.invalid += 1;
-  };
-
-  Stats.prototype.incrementPass = function () {
-      this.pass += 1;
-  };
-
-  Stats.prototype.addTags = function (ts) {
+    this.addTags = function (ts) {
       var i, j, tag, found;
 
       for (i = 0; i < ts.length; i++) {
-          tag = ts[i];
-          found = false;
-          for (j = 0; j < this.tags.length; j++) {
-              if (this.tags[j][1] === tag) {
-                  found = true;
-                  this.tags[j][0] += 1;
-              }
+        tag = ts[i];
+        found = false;
+        for (j = 0; j < this.tags.length; j++) {
+          if (this.tags[j][1] === tag) {
+            found = true;
+            this.tags[j][0] += 1;
           }
-          if (!found) {
-              this.tags.push([1, tag]);
-          }
+        }
+        if (!found) {
+          this.tags.push([1, tag]);
+        }
       }
-  };
+    };
 
-  Stats.prototype.newResult = function (prop) {
-      if (this.pass > 0) {
-          return new Pass(prop, this);
+    this.newResult = function (prop) {
+      if (this.counts.pass > 0) {
+        return new Pass(prop, this);
       } else {
-          return new Invalid(prop, this);
+        return new Invalid(prop, this);
       }
-  };
+    };
 
-  Stats.prototype.toString = function () {
-      return '(pass=' + this.pass + ', invalid=' + this.invalid + ')';
+    this.toString = function () {
+      return '(pass=' + this.counts.pass + ', invalid=' + this.counts.invalid + ')';
+    };
   };
 
   return Stats;

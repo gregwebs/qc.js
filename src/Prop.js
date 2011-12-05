@@ -118,27 +118,28 @@ define('Prop', [
    * @return depending on test result a Pass, Fail or Invalid object
    */
   Prop.prototype.run = function (config) {
-      var args, testCase, dist, shrunkArgs;
-      var stats = new Stats(), size = 0, collected = [];
+    var args, testCase, dist, shrunkArgs;
+    var stats = new Stats(), size = 0, collected = [];
 
-      while (config.needsWork(stats)) {
+      while (config.needsWork(stats.counts.pass, stats.counts.invalid)) {
           args = this.generateArgs(size);
           testCase = new Case(args);
           try {
-              this.body.apply(this, [testCase].concat(args));
-              stats.incrementPass();
+            this.body.apply(this, [testCase].concat(args));
+            stats.addPass(args);
           }
           catch (e) {
               if (e === 'AssertFailed') {
+                  stats.addFail(args);
                   dist = !testCase.collected ||
                           testCase.collected.length === 0 ?  null :
                               new Distribution(testCase.collected);
 
-                  shrunkArgs = this._shrinkLoop(config, size, args);
+                  shrunkArgs = this._shrinkLoop(config, size, args, stats);
                   return new Fail(this, stats, args, shrunkArgs,
                                   testCase.tags, dist);
               } else if (e === 'InvalidCase') {
-                  stats.incrementInvalid();
+                stats.addInvalid(args);
               } else {
                   throw (e);
               }
@@ -157,7 +158,7 @@ define('Prop', [
   /**
    * @private
    */
-  Prop.prototype._shrinkLoop = function(config, size, args) {
+  Prop.prototype._shrinkLoop = function(config, size, args, stats) {
     var i, testCase;
     var failedArgs = [args], shrunkArgs = [];
     for (var loop = 0; loop < config.maxShrink; loop++) {
@@ -167,25 +168,28 @@ define('Prop', [
         shrunkArgs = shrunkArgs.concat(
           this.generateShrunkArgs(size, failedArgs[i], config.maxShrunkArgs));
       }
-      if (shrunkArgs.length === 0) {
-        return failedArgs.length === 0 ? null : failedArgs[0];
-      }
-      // Create new failed arguments from shrunk ones by running the property.
-      failedArgs = [];
-      for (i = 0; i < shrunkArgs.length; i++) {
-        try {
-          testCase = new Case(shrunkArgs[i]);
-          this.body.apply(this, [testCase].concat(shrunkArgs[i]));
-        } catch (e) {
-          if (e === 'InvalidCase') {
-          } else if (e === 'AssertFailed') {
-            if (loop === config.maxShrink - 1) {
-              return shrunkArgs[i];
+      if (shrunkArgs.length > 0) {
+        // Create new failed arguments from shrunk ones by running the property.
+        failedArgs = [];
+        for (i = 0; i < shrunkArgs.length; i++) {
+          var args = shrunkArgs[i];
+          try {
+            testCase = new Case(args);
+            this.body.apply(this, [testCase].concat(args));
+            stats.addShrinkPass(args);
+          } catch (e) {
+            if (e === 'InvalidCase') {
+              stats.addShrinkInvalid(args);
+            } else if (e === 'AssertFailed') {
+              stats.addShrinkFail(args);
+              if (loop === config.maxShrink - 1) {
+                return args;
+              } else {
+                failedArgs.push(args);
+              }
             } else {
-              failedArgs.push(shrunkArgs[i]);
+              throw e;
             }
-          } else {
-            throw e;
           }
         }
       }

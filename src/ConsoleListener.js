@@ -26,18 +26,15 @@ define('ConsoleListener', function() {
    */
   ConsoleListener.prototype.noteResult = function (result) {
       var i, tags, tag, distr, d;
-      var statusString = result.status + ': ' + result.name;
 
+console.log(JSON.stringify(result.stats.counts));
+console.log('shrink',JSON.stringify(result.stats.shrinkCounts));
       if (result.status === 'pass') {
-          this.passed(result);
-          //this.log(result.counts);
+        this.passed(result);
+      } else if (result.status === 'fail') {
+        this.failure(result);
       } else {
-          this.invalid(statusString);
-          this.log(result);
-      }
-      if (result.status === 'fail') {
-          this.failure('Failed case:');
-          this.log(result.failedCase);
+        this.invalid(result);
       }
 
       //print tags
