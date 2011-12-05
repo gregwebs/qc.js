@@ -14,8 +14,8 @@ define('Config', function() {
   function Config(params) {
     this.maxPass = params.maxPass || 100;
     this.maxInvalid = params.maxInvalid || 10;
-    this.maxShrink = typeof params.maxShrink == 'undefined' ? 3 : params.maxShrink;
-    this.maxShrunkArgs = typeof params.maxShrunkArgs == 'undefined' ? 100 : params.maxShrunkArgs;
+    this.maxShrink = parseInt(params.maxShrink) || 3;
+    this.maxShrunkArgs = parseInt(params.maxShrunkArgs) || 100;
     this.searchString = params.searchString || '';
   }
 
