@@ -35,9 +35,9 @@ define('Prop', [
   /**
    * @private
    */
-  Prop.prototype.generateShrunkArgs = function (size, args) {
+  Prop.prototype.generateShrunkArgs = function (size, args, maxShrunkArgs) {
       // Create shrunk args for each argument.
-      var i, idxs, tmp, gen, countShrunk = 0, shrunk = [], newArgs = [];
+      var i, gen, countShrunk = 0, shrunk = [], newArgs = [];
 
       for (i = 0; i < this.gens.length; i++) {
           gen = this.gens[i];
@@ -63,17 +63,18 @@ define('Prop', [
       }
 
       // create index list to draw lists of arguments from
-      idxs = new Array(this.gens.length);
+      var idxs = [];
       for (i = 0; i < this.gens.length; i++) {
           idxs[i] = 0;
       }
 
       // create list of shrunk arguments:
       while (idxs[0] < shrunk[0].length) {
-          tmp = new Array(shrunk.length);
+          var tmp = [];
           for (i = 0; i < shrunk.length; i++) {
               tmp[i] = shrunk[i][idxs[i]];
           }
+// TODO We could filter out double values, to not generate the same test cases over and over, hash and dont add twice, what about none simple values?
           newArgs.push(tmp);
 
           // adjust all indices
@@ -85,6 +86,18 @@ define('Prop', [
                   break;
               }
           }
+      }
+      // If a max number of shrunk args is given reduce the newArgs array down to that number.
+      if (maxShrunkArgs && newArgs.length>maxShrunkArgs){
+        // Since we ceil the result here, we may end up with less than 100, but that's ok,
+        // the more newArgs we had before the closer we get to the 100, and the less
+        // the smaller the number also gets, which means the relevance is high enough.
+        var everyXth = Math.ceil(newArgs.length / maxShrunkArgs);
+        var ret = [];
+        for (var i=0; i<newArgs.length; i+=everyXth){
+          ret.push(newArgs[i]);
+        }
+        newArgs = ret;
       }
 
       return newArgs;

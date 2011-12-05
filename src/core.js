@@ -27,7 +27,7 @@ define('core', [
       shrunkArgs = [];
       for (i = 0; i < failedArgs.length; i++) {
         shrunkArgs = shrunkArgs.concat(
-          prop.generateShrunkArgs(size, failedArgs[i]));
+          prop.generateShrunkArgs(size, failedArgs[i], config.maxShrunkArgs));
       }
       if (shrunkArgs.length === 0) {
         return failedArgs.length === 0 ? null : failedArgs[0];
