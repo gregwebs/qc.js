@@ -25,9 +25,9 @@ define('Config', function() {
    *
    * @private
    */
-  Config.prototype.needsWork = function (count) {
-      return count.invalid < this.maxInvalid &&
-          count.pass < this.maxPass;
+  Config.prototype.needsWork = function (numPass, numInvalid) {
+      return numInvalid < this.maxInvalid &&
+          numPass < this.maxPass;
   };
 
   return Config;
