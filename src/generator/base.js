@@ -83,7 +83,7 @@ define('generator/base', [
     var generator = function(size) {
       return generators.map(function(g){ return util.generateValue(g, size); });
     };
-    return { func: generator, shrink: shrinkStrategy || arrShrinkOne };
+    return { func: generator, shrink: shrinkStrategy };
   };
 
   /**
