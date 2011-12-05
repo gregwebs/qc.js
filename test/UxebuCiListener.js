@@ -10,7 +10,7 @@ define([
   var UxebuCiListener = function(){
     HtmlListener.apply(this, arguments); // Call the parent constructor.
   };
-  UxebuCiListener.prototype = new HtmlListener();
+  UxebuCiListener.prototype = new HtmlListener({});
 
   var lastType = '';
   var lastResultName = '';
