@@ -1,6 +1,15 @@
 define('browser-tests', ['qc'], function(qc){
-  var searchString = window.location.search ? window.location.search.replace(/\?/, '') : '';
-  var config = new qc.Config({searchString:searchString});
+  
+  var params = {searchString:'', maxPass:100, maxShrink:3, maxShrunkArgs:100};
+  if (window.location.search){
+    var parts = window.location.search.replace(/\?/, '').split('&');
+    var vals = parts.forEach(function(p){
+      var keyValue = p.split('=');
+      if (typeof params[keyValue[0]] != 'undefined') params[keyValue[0]] = keyValue[1];
+    });
+  }
+console.log(params);
+  var config = new qc.Config(params);
   require([
     '../test/UxebuCiListener',
     '../test/random',
@@ -13,6 +22,6 @@ define('browser-tests', ['qc'], function(qc){
     '../test/generator-html',
 
   ], function(UxebuCiListener){
-    qc.runProps(config, new UxebuCiListener('testresults', true));
+    qc.runProps(config, new UxebuCiListener({nodeId:'testresults', showPassedTests:true}));
   });
 });
