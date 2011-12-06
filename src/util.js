@@ -40,8 +40,7 @@ define('util', function() {
    */
   exports.generateShrunkValues = function(gen, size, arg) {
     if (!gen || gen instanceof Function ||
-      gen.shrink === undefined || gen.shrink === null)
-    {
+      gen.shrink === undefined || gen.shrink === null) {
       return [];
     }
 

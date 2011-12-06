@@ -1,10 +1,10 @@
 define('generator/html/_util', [
   'qc'
-], function(qc){
+], function(qc) {
 
   var exports = {};
 
-  exports.getHexNumber = function(length){
+  exports.getHexNumber = function(length) {
     var vals = [];
     for (var i=0; i<Math.ceil(length/2); i++){ vals.push(qc.getPositiveInteger(255)); };
     var digits = vals.map(function(val){ return ('0' + val.toString(16)).slice(-2); }).join('');
@@ -44,7 +44,7 @@ define('generator/html/_util', [
     'Yellow', 'YellowGreen'
   ];
 
-  exports.getRandomColorName = function(){
+  exports.getRandomColorName = function() {
     var len = colorNames.length;
     var index = Math.round(Math.random() * (len-1));
     return colorNames[index];

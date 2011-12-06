@@ -12,7 +12,7 @@ define('generator/string', [
    *
    * @constant
    */
-  exports.strings = function(){
+  exports.strings = function() {
       var a = base.arrays(number.integerRanges(32, 255));
 
       var func = function (size) {
@@ -44,7 +44,7 @@ define('generator/string', [
    *
    * @constant
    */
-  exports.chararcters = function(){
+  exports.chararcters = function() {
     return base.mod(
       number.integerRanges(32, 255),
       function (num) { return String.fromCharCode(num); }

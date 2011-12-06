@@ -9,7 +9,7 @@ define('qc', [
 ], function(
   core, random, util,
   generator,
-  Config, Distribution, Prop, ConsoleListener, HtmlListener, NodeConsoleListener){
+  Config, Distribution, Prop, ConsoleListener, HtmlListener, NodeConsoleListener) {
 
   var exports = {
     Config: Config,
@@ -20,9 +20,9 @@ define('qc', [
     NodeConsoleListener: NodeConsoleListener,
     generator: generator
   };
-  [core, random, util].map(function(arg){
+  [core, random, util].map(function(arg) {
     // Add all properties to the exports, mostly its a collection of functions.
-    for (var prop in arg){
+    for (var prop in arg) {
       exports[prop] = arg[prop];
     }
   });

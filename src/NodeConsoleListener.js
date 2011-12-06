@@ -1,7 +1,7 @@
 define('NodeConsoleListener', [
   'ConsoleListener'
 ], function(ConsoleListener) {
-  function NodeConsoleListener(){
+  function NodeConsoleListener() {
     ConsoleListener.apply(this, arguments); // Call the parent constructor.
   };
   NodeConsoleListener.prototype = new ConsoleListener();
@@ -17,8 +17,10 @@ define('NodeConsoleListener', [
   };
   // The following two are pretty verbose, so make the shut up.
   NodeConsoleListener.prototype.log = function (result) {
+
   };
   NodeConsoleListener.prototype.invalid = function (result) {
+
   };
 
   return NodeConsoleListener;

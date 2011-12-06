@@ -42,14 +42,12 @@ define('Prop', [
       for (i = 0; i < this.gens.length; i++) {
           gen = this.gens[i];
           if ((gen instanceof Function) || gen.shrink === undefined ||
-             gen.shrink === null || !(gen.shrink instanceof Function))
-          {
+             gen.shrink === null || !(gen.shrink instanceof Function)) {
               shrunk.push([args[i]]);
           } else {
               tmp = gen.shrink(size, args[i]);
               if (tmp === undefined ||
-                  (tmp instanceof Array && tmp.length === 0))
-              {
+                  (tmp instanceof Array && tmp.length === 0)) {
                   shrunk.push([args[i]]);
               } else {
                   countShrunk++;
@@ -95,14 +93,14 @@ define('Prop', [
    * @param shrunkArgs {Array} The shrunk arguments list.
    * @param maxShrunkArgs {Integer} The max number of shrunk args to provide as input to the shrink method.
    */
-  function reduceToMaxShrunkArgs(shrunkArgs, maxShrunkArgs){
-      if (maxShrunkArgs && shrunkArgs.length>maxShrunkArgs){
+  function reduceToMaxShrunkArgs(shrunkArgs, maxShrunkArgs) {
+      if (maxShrunkArgs && shrunkArgs.length>maxShrunkArgs) {
         // Since we ceil the result here, we may end up with less than 100, but that's ok,
         // the more shrunkArgs we had before the closer we get to the 100, and the less
         // the smaller the number also gets, which means the relevance is high enough.
         var everyXth = Math.ceil(shrunkArgs.length / maxShrunkArgs);
         var ret = [];
-        for (var i=0; i<shrunkArgs.length; i+=everyXth){
+        for (var i=0; i<shrunkArgs.length; i+=everyXth) {
           ret.push(shrunkArgs[i]);
         }
         shrunkArgs = ret;

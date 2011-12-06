@@ -54,8 +54,7 @@ console.log('shrink',JSON.stringify(result.stats.shrinkCounts));
       //print histogram statistics if present
       if (this.maxCollected !== 0 &&
           result.stats.collected &&
-          result.stats.collected.length > 0)
-      {
+          result.stats.collected.length > 0) {
           distr = result.stats.collected;
           distr = distr.data.slice(
               0, this.maxCollected === -1 ? distr.data.length :
@@ -71,7 +70,6 @@ console.log('shrink',JSON.stringify(result.stats.shrinkCounts));
               this.log(d[0] * 100 + '% : ' + d[1]);
           }
       }
-
   };
 
   /**

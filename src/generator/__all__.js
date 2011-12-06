@@ -12,7 +12,7 @@ define('generator/__all__', [
   };
 
   // Populate all functions from base straight into the 'generator' namespace.
-  for (var i in base){
+  for (var i in base) {
     modules[i] = base[i];
   }
 

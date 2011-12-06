@@ -35,7 +35,7 @@ define('generator/base', [
    *
    * @constant
    */
-  exports.booleans = function(){
+  exports.booleans = function() {
     return chooseValue(false, true);
   };
 
@@ -44,7 +44,7 @@ define('generator/base', [
    *
    * @constant
    */
-  var nulls = exports.nulls = function(){
+  var nulls = exports.nulls = function() {
     return chooseValue(null);
   };
 
@@ -60,7 +60,7 @@ define('generator/base', [
     var generatorFunc = function(size) {
       var i, list = [];
       var listSize = random.getPositiveInteger(size);
-      if (minSize){
+      if (minSize) {
         listSize = Math.max(listSize, minSize);
       }
       for (i = 0; i < listSize; i += 1) {
@@ -91,7 +91,7 @@ define('generator/base', [
    * @param generator The generator to fill the array with content.
    * @param shrinkStrategy Shrink the result in case of failure, to narrow down the failing values.
    */
-  exports.nonEmptyArrays = function(generator, shrinkStrategy){
+  exports.nonEmptyArrays = function(generator, shrinkStrategy) {
     return arrays(generator, shrinkStrategy, 1);
   };
 
@@ -102,7 +102,7 @@ define('generator/base', [
    *
    * @constant
    */
-  exports.dates = function(){
+  exports.dates = function() {
     return {
       func: function () {
           return new Date();
@@ -116,7 +116,7 @@ define('generator/base', [
       return {
           func: function (size) {
                   return util.generateValue(d.pick(), size);
-              },
+          },
           shrink: function (size, a) {
               if (a === null) {
                   return [];
@@ -172,7 +172,7 @@ define('generator/base', [
    *
    * @constant
    */
-  var undefineds = exports.undefineds = function(){
+  var undefineds = exports.undefineds = function() {
     return chooseValue(undefined);
   };
 

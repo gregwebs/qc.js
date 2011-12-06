@@ -33,27 +33,27 @@ define('Stats', [
      */
     this.collected = null;
 
-    this.addInvalid = function(args){
+    this.addInvalid = function(args) {
       this.counts.invalid++;
       this.results.push({result:'invalid', args:args});
     };
-    this.addPass = function(args){
+    this.addPass = function(args) {
       this.counts.pass++;
       this.results.push({result:'pass', args:args});
     };
-    this.addFail = function(args){
+    this.addFail = function(args) {
       this.counts.fail++;
       this.results.push({result:'fail', args:args});
     };
-    this.addShrinkInvalid = function(args){
+    this.addShrinkInvalid = function(args) {
       this.shrinkCounts.invalid++;
       this.shrinkResults.push({result:'invalid', args:args});
     };
-    this.addShrinkPass = function(args){
+    this.addShrinkPass = function(args) {
       this.shrinkCounts.pass++;
       this.shrinkResults.push({result:'pass', args:args});
     };
-    this.addShrinkFail = function(args){
+    this.addShrinkFail = function(args) {
       this.shrinkCounts.fail++;
       this.shrinkResults.push({result:'fail', args:args});
     };

@@ -9,9 +9,9 @@ define('generator/number', [
    *
    * @constant
    */
-  exports.integers = function(){
+  exports.integers = function() {
     return {
-      func: function(size){
+      func: function(size) {
         return random.getInteger(size);
       },
       shrink: function (size, x) {
@@ -22,7 +22,7 @@ define('generator/number', [
 
           while (true) {
               tmp = tmp / 2;
-              if (tmp === 0 || isNaN(tmp)){ // If tmp is not a number quit too, should not happen.
+              if (tmp === 0 || isNaN(tmp)) { // If tmp is not a number quit too, should not happen.
                   break;
               }
 
@@ -40,9 +40,9 @@ define('generator/number', [
    *
    * @constant
    */
-  exports.positiveIntegers = function(){
+  exports.positiveIntegers = function() {
     return {
-      func: function(size){
+      func: function(size) {
         return random.getPositiveInteger(size);
       },
       shrink: function (size, x) {
@@ -65,9 +65,9 @@ define('generator/number', [
    *
    * @constant
    */
-  exports.floats = function(){
+  exports.floats = function() {
     return {
-      func: function(size){
+      func: function(size) {
         return random.getFloat(size);
       },
       shrink: function (size, x) {
@@ -94,7 +94,7 @@ define('generator/number', [
       func: function() {
         return Math.floor(Math.random() * (max - min)) + min;
       }
-    }
+    };
   };
 
   exports.floatRanges = function(minValue, maxValue) {
@@ -104,7 +104,7 @@ define('generator/number', [
       func: function() {
         return Math.random() * (max - min) + min;
       }
-    }
+    };
   };
 
   return exports;
