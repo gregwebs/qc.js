@@ -28,7 +28,7 @@
       names: /[a-zA-Z]+/,
       nameUpperCases: /[A-Z]+/,
       nameLowerCases: /[a-z]+/,
-      nameRandomCases: /[a-z]+/
+      nameRandomCases: /[a-zA-Z]+/
     };
 
     qc.declare("any possible kind of colors", [htmlColorGenerator.any()],
