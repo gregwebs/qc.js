@@ -16,8 +16,22 @@ define('random', function() {
     return Math.floor(Math.random() * top * 2) - top;
   };
 
-  exports.getFloat = function() {
-    return Math.random();
+  /**
+   * Generate a random float between 0 and top.
+   * @param top
+   * @return Float A random float value.
+   */
+  exports.getPositiveFloat = function(top) {
+    return (Math.random() * top);
+  };
+
+  /**
+   * Generate a random float between -top and +top.
+   * @param top
+   * @return Float A random float value.
+   */
+  exports.getFloat = function(top) {
+    return (Math.random() * top * 2) - top;
   };
 
   return exports;
