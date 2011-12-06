@@ -28,11 +28,36 @@
       }
     );
 
-    qc.declare("range", [gen.range(-10, 10)],
+    qc.declare("integerRanges works at all", [gen.integerRanges(-10, 10)],
       function(testCase, value) {
         testCase.assert(value >= -10 && value <= 10);
       }
     );
+
+    qc.declare("integerRanges with random ranges", [gen.integers(), gen.integers()],
+      function(testCase, minValue, maxValue) {
+        var min = Math.min(minValue, maxValue);
+        var max = Math.max(minValue, maxValue);
+        var value = qc.generateValue(gen.integerRanges(minValue, maxValue));
+        testCase.assert(value >= min && value <= max);
+      }
+    );
+
+    qc.declare("floatRanges", [gen.floatRanges(-10, 10)],
+      function(testCase, value) {
+        testCase.assert(value >= -10 && value <= 10);
+      }
+    );
+    
+    qc.declare("floatRanges with random ranges", [gen.floats(), gen.floats()],
+      function(testCase, minValue, maxValue) {
+        var min = Math.min(minValue, maxValue);
+        var max = Math.max(minValue, maxValue);
+        var value = qc.generateValue(gen.floatRanges(minValue, maxValue));
+        testCase.assert(value >= min && value <= max);
+      }
+    );
+
     //*/
   };
 })();

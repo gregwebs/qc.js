@@ -1,5 +1,7 @@
 define('generator/string', [
-  'generator/base', 'generator/number', 'util'
+  'generator/base',
+  'generator/number',
+  'util'
 ],function(base, number, util) {
   var exports = {};
 
@@ -11,7 +13,7 @@ define('generator/string', [
    * @constant
    */
   exports.strings = function(){
-      var a = base.arrays(number.range(32, 255));
+      var a = base.arrays(number.integerRanges(32, 255));
 
       var func = function (size) {
           // Add 10 to the size to really get a string, not am empty string so often in the beginning.
@@ -44,7 +46,7 @@ define('generator/string', [
    */
   exports.chararcters = function(){
     return base.mod(
-      number.range(32, 255),
+      number.integerRanges(32, 255),
       function (num) { return String.fromCharCode(num); }
     );
   };

@@ -1,6 +1,6 @@
 define('generator/number', [
-  'random', 'generator/base'
-], function(random, base) {
+  'random'
+], function(random) {
   var exports = {};
 
   /**
@@ -12,8 +12,7 @@ define('generator/number', [
   exports.integers = function(){
     return {
       func: function(size){
-        var ret = random.getInteger(size);
-        return ret;
+        return random.getInteger(size);
       },
       shrink: function (size, x) {
           var tmp = x, ret = [];
@@ -43,7 +42,9 @@ define('generator/number', [
    */
   exports.positiveIntegers = function(){
     return {
-      func: random.getPositiveInteger,
+      func: function(size){
+        return random.getPositiveInteger(size);
+      },
       shrink: function (size, x) {
           var tmp = x, ret = [];
           while (true) {
@@ -66,7 +67,9 @@ define('generator/number', [
    */
   exports.floats = function(){
     return {
-      func: random.getFloat,
+      func: function(size){
+        return random.getFloat(size);
+      },
       shrink: function (size, x) {
           var tmp, ret = [];
 
@@ -84,13 +87,24 @@ define('generator/number', [
     };
   };
 
-  exports.range = function(minValue, maxValue) {
+  exports.integerRanges = function(minValue, maxValue) {
     var min = Math.min(minValue, maxValue);
     var max = Math.max(minValue, maxValue);
-    var generator = function() {
-      return Math.floor(Math.random() * (max - min)) + min;
-    };
-    return { func: generator };
+    return {
+      func: function() {
+        return Math.floor(Math.random() * (max - min)) + min;
+      }
+    }
+  };
+
+  exports.floatRanges = function(minValue, maxValue) {
+    var min = Math.min(minValue, maxValue);
+    var max = Math.max(minValue, maxValue);
+    return {
+      func: function() {
+        return Math.random() * (max - min) + min;
+      }
+    }
   };
 
   return exports;

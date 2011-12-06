@@ -18,7 +18,7 @@
       return qc.generateValue(gen.nonEmptyArrays( // Generate an array with at least one of the following elements.
         gen.arraysOfSize( // Generate an array with a fixed size with the two following elements.
           [
-            gen.number.range(1, 1000), // First element is always a number, the probability.
+            gen.number.integerRanges(1, 1000), // First element is always a number, the probability.
             gen.string.strings() // Second element is always a string, the value.
           ]
         )

@@ -29,6 +29,12 @@
         c.assert(!isNaN(a));
       }
     );
+
+    qc.declare("random float with random top", [makeGenerator(qc.getFloat)],
+      function(testCase, value) {
+        testCase.assert(!isNaN(value) && value==parseFloat(value));
+      }
+    );
     //*/
   };
 })();
