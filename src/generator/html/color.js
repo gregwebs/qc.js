@@ -130,7 +130,7 @@ define('generator/html/color', [
   exports.rgba = function(){
     return {
       func: function(){
-        var vals = [qc.getPositiveInteger(255), qc.getPositiveInteger(255), qc.getPositiveInteger(255), qc.getFloat()];
+        var vals = [qc.getPositiveInteger(255), qc.getPositiveInteger(255), qc.getPositiveInteger(255), qc.getPositiveFloat(1)];
         return 'rgba(' + vals.join(',') + ')';
       }
     };
@@ -139,7 +139,7 @@ define('generator/html/color', [
   exports.rgbaPercent = function(){
     return {
       func: function(){
-        var vals = [qc.getPositiveInteger(100), qc.getPositiveInteger(100), qc.getPositiveInteger(100), qc.getFloat()];
+        var vals = [qc.getPositiveInteger(100), qc.getPositiveInteger(100), qc.getPositiveInteger(100), qc.getPositiveFloat(1)];
         return 'rgba(' + vals.join('%,') + ')';
       }
     };
