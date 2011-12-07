@@ -88,8 +88,8 @@ define('generator/number', [
   };
 
   exports.integerRanges = function(minValue, maxValue) {
-    var min = Math.min(minValue, maxValue);
-    var max = Math.max(minValue, maxValue);
+    var min = minValue < maxValue ? minValue : maxValue;
+    var max = minValue < maxValue ? maxValue : minValue;
     return {
       func: function() {
         return Math.floor(Math.random() * (max - min)) + min;
@@ -98,8 +98,8 @@ define('generator/number', [
   };
 
   exports.floatRanges = function(minValue, maxValue) {
-    var min = Math.min(minValue, maxValue);
-    var max = Math.max(minValue, maxValue);
+    var min = minValue < maxValue ? minValue : maxValue;
+    var max = minValue < maxValue ? maxValue : minValue;
     return {
       func: function() {
         return Math.random() * (max - min) + min;
