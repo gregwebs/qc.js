@@ -43,12 +43,13 @@ var qc = null;
   function Config(params) {
     this.maxPass = params.maxPass || 100;
     this.maxInvalid = params.maxInvalid || 10;
-    this.maxShrink = typeof params.maxShrink == 'undefined' ? 3 : params.maxShrink;
+    this.maxShrink = parseInt(params.maxShrink) || 1;
+    this.maxShrunkArgs = parseInt(params.maxShrunkArgs) || 100;
     this.searchString = params.searchString || '';
   }
-  Config.prototype.needsWork = function (count) {
-      return count.invalid < this.maxInvalid &&
-          count.pass < this.maxPass;
+  Config.prototype.needsWork = function (numPass, numInvalid) {
+      return numInvalid < this.maxInvalid &&
+          numPass < this.maxPass;
   };
   return Config;
 })();
@@ -59,6 +60,8 @@ var qc = null;
   }
   ConsoleListener.prototype.noteResult = function (result) {
       var i, tags, tag, distr, d;
+console.log(JSON.stringify(result.stats.counts));
+console.log('shrink',JSON.stringify(result.stats.shrinkCounts));
       if (result.status === 'pass') {
         this.passed(result);
       } else if (result.status === 'fail') {
@@ -80,8 +83,7 @@ var qc = null;
       }
             if (this.maxCollected !== 0 &&
           result.stats.collected &&
-          result.stats.collected.length > 0)
-      {
+          result.stats.collected.length > 0) {
           distr = result.stats.collected;
           distr = distr.data.slice(
               0, this.maxCollected === -1 ? distr.data.length :
@@ -142,7 +144,7 @@ var qc = null;
 })(__ConsoleListener);
 
 ;var __NodeConsoleListener=( function(ConsoleListener) {
-  function NodeConsoleListener(){
+  function NodeConsoleListener() {
     ConsoleListener.apply(this, arguments);   };
   NodeConsoleListener.prototype = new ConsoleListener();
   NodeConsoleListener.prototype.passed = function (result) {
@@ -267,39 +269,6 @@ var qc = null;
   exports.resetProps = function() {
     allProps = [];
   };
-  exports.shrinkLoop = function(config, prop, size, args) {
-    var i, testCase;
-    var failedArgs = [args], shrunkArgs = [];
-    for (var loop = 0; loop < config.maxShrink; loop++) {
-            shrunkArgs = [];
-      for (i = 0; i < failedArgs.length; i++) {
-        shrunkArgs = shrunkArgs.concat(
-          prop.generateShrunkArgs(size, failedArgs[i]));
-      }
-      if (shrunkArgs.length === 0) {
-        return failedArgs.length === 0 ? null : failedArgs[0];
-      }
-            failedArgs = [];
-      for (i = 0; i < shrunkArgs.length; i++) {
-        try {
-          testCase = new Case(shrunkArgs[i]);
-          prop.body.apply(prop, [testCase].concat(shrunkArgs[i]));
-        } catch (e) {
-          if (e === 'InvalidCase') {
-          } else if (e === 'AssertFailed') {
-            if (loop === config.maxShrink - 1) {
-              return shrunkArgs[i];
-            } else {
-              failedArgs.push(shrunkArgs[i]);
-            }
-          } else {
-            throw e;
-          }
-        }
-      }
-    }
-    return failedArgs.length === 0 ? null : failedArgs[0];
-  };
   exports.runProps = function(config, listener) {
     var once, i = 0;
     listener = typeof listener == 'undefined' ? new ConsoleListener() : listener;
@@ -323,18 +292,18 @@ var qc = null;
       }
     }
   };
-  function filterProps(searchString){
+  function filterProps(searchString) {
     var ret = [];
-    if (!searchString){
+    if (!searchString) {
             ret = allProps;
-    }else if (searchString.match(/^\/.*\/$/)){
+    }else if (searchString.match(/^\/.*\/$/)) {
             var regexp = new RegExp(searchString.slice(1, -1));
-      ret = allProps.filter(function(prop){
+      ret = allProps.filter(function(prop) {
         return prop.name.match(regexp);
       });
     } else {
             var searchFor = searchString.toLowerCase();
-      ret = allProps.filter(function(prop){
+      ret = allProps.filter(function(prop) {
         return prop.name.toLowerCase().indexOf(searchFor) != -1;
       });
     }
@@ -384,6 +353,15 @@ var qc = null;
       }
     };
   };
+  exports.generateValue = function(generator, size) {
+    return generator.func(size);
+  };
+  exports.generateShrunkValues = function(gen, size, arg) {
+    if (typeof gen.shrink == 'undefined') {
+      return [];
+    }
+    return gen.shrink(size, arg) || [];
+  };
   return exports;
 })(__Distribution,__Case,__ConsoleListener);
 
@@ -422,78 +400,92 @@ var qc = null;
   exports.getInteger = function(top) {
     return Math.floor(Math.random() * top * 2) - top;
   };
-  exports.getFloat = function() {
-    return Math.random();
+  exports.getPositiveFloat = function(top) {
+    return (Math.random() * top);
+  };
+  exports.getFloat = function(top) {
+    return (Math.random() * top * 2) - top;
   };
   return exports;
 })();
 
 ;var __Stats=(function(Pass, Invalid) {
   function Stats() {
-      this.pass = 0;
-      this.invalid = 0;
-      this.tags = [];
-      this.collected = null;
-  }
-  Stats.prototype.incrementInvalid = function () {
-      this.invalid += 1;
-  };
-  Stats.prototype.incrementPass = function () {
-      this.pass += 1;
-  };
-  Stats.prototype.addTags = function (ts) {
+    this.counts = {
+      pass:0,
+      invalid:0,
+      fail:0
+    };
+    this.shrinkCounts = {
+      pass:0,
+      invalid:0,
+      fail:0
+    };
+    this.results = [];
+    this.shrinkResults = [];
+    this.tags = [];
+    this.collected = null;
+    this.addInvalid = function(args) {
+      this.counts.invalid++;
+      this.results.push({result:'invalid', args:args});
+    };
+    this.addPass = function(args) {
+      this.counts.pass++;
+      this.results.push({result:'pass', args:args});
+    };
+    this.addFail = function(args) {
+      this.counts.fail++;
+      this.results.push({result:'fail', args:args});
+    };
+    this.addShrinkInvalid = function(args) {
+      this.shrinkCounts.invalid++;
+      this.shrinkResults.push({result:'invalid', args:args});
+    };
+    this.addShrinkPass = function(args) {
+      this.shrinkCounts.pass++;
+      this.shrinkResults.push({result:'pass', args:args});
+    };
+    this.addShrinkFail = function(args) {
+      this.shrinkCounts.fail++;
+      this.shrinkResults.push({result:'fail', args:args});
+    };
+    this.addTags = function (ts) {
       var i, j, tag, found;
       for (i = 0; i < ts.length; i++) {
-          tag = ts[i];
-          found = false;
-          for (j = 0; j < this.tags.length; j++) {
-              if (this.tags[j][1] === tag) {
-                  found = true;
-                  this.tags[j][0] += 1;
-              }
+        tag = ts[i];
+        found = false;
+        for (j = 0; j < this.tags.length; j++) {
+          if (this.tags[j][1] === tag) {
+            found = true;
+            this.tags[j][0] += 1;
           }
-          if (!found) {
-              this.tags.push([1, tag]);
-          }
+        }
+        if (!found) {
+          this.tags.push([1, tag]);
+        }
       }
-  };
-  Stats.prototype.newResult = function (prop) {
-      if (this.pass > 0) {
-          return new Pass(prop, this);
+    };
+    this.newResult = function (prop) {
+      if (this.counts.pass > 0) {
+        return new Pass(prop, this);
       } else {
-          return new Invalid(prop, this);
+        return new Invalid(prop, this);
       }
-  };
-  Stats.prototype.toString = function () {
-      return '(pass=' + this.pass + ', invalid=' + this.invalid + ')';
+    };
+    this.toString = function () {
+      return '(pass=' + this.counts.pass + ', invalid=' + this.counts.invalid + ')';
+    };
   };
   return Stats;
 })(__Pass,__Invalid);
 
-;var __util=( function() {
-  var exports = {};
-  exports.generateValue = function(generator, size) {
-    return generator.func(size);
-  };
-  exports.generateShrunkValues = function(gen, size, arg) {
-    if (!gen || gen instanceof Function ||
-      gen.shrink === undefined || gen.shrink === null)
-    {
-      return [];
-    }
-    var tmp = gen.shrink(size, arg);
-    return (tmp === null || tmp === undefined) ? [] : tmp;
-  };
-  return exports;
-})();
-
-;var __generator_base=( function(random, util, Distribution) {
+;var __generator_base=( function(random, qc, Distribution) {
   var exports = {};
   exports.chooseGenerator = function() {
     var d = Distribution.uniform(arguments);
     return {
       func: function (size) {
-          return util.generateValue(d.pick(), size);
+          return qc.generateValue(d.pick(), size);
       },
       shrink: null
     };
@@ -506,21 +498,21 @@ var qc = null;
       }
     };
   };
-  exports.booleans = function(){
+  exports.booleans = function() {
     return chooseValue(false, true);
   };
-  var nulls = exports.nulls = function(){
+  var nulls = exports.nulls = function() {
     return chooseValue(null);
   };
   var arrays = exports.arrays = function(generator, shrinkStrategy, minSize) {
     var generatorFunc = function(size) {
       var i, list = [];
       var listSize = random.getPositiveInteger(size);
-      if (minSize){
+      if (minSize) {
         listSize = Math.max(listSize, minSize);
       }
       for (i = 0; i < listSize; i += 1) {
-        list.push(util.generateValue(generator, size));
+        list.push(qc.generateValue(generator, size));
       }
       return list;
     };
@@ -528,14 +520,14 @@ var qc = null;
   };
   exports.arraysOfSize = function(generators, shrinkStrategy) {
     var generator = function(size) {
-      return generators.map(function(g){ return util.generateValue(g, size); });
+      return generators.map(function(g){ return qc.generateValue(g, size); });
     };
     return { func: generator, shrink: shrinkStrategy };
   };
-  exports.nonEmptyArrays = function(generator, shrinkStrategy){
+  exports.nonEmptyArrays = function(generator, shrinkStrategy) {
     return arrays(generator, shrinkStrategy, 1);
   };
-  exports.dates = function(){
+  exports.dates = function() {
     return {
       func: function () {
           return new Date();
@@ -546,13 +538,13 @@ var qc = null;
             var d = new Distribution([[10, nulls()], [90, otherGen]]);
       return {
           func: function (size) {
-                  return util.generateValue(d.pick(), size);
-              },
+                  return qc.generateValue(d.pick(), size);
+          },
           shrink: function (size, a) {
               if (a === null) {
                   return [];
               } else {
-                  return [null].concat(util.generateShrunkValues(otherGen, size, a));
+                  return [null].concat(qc.generateShrunkValues(otherGen, size, a));
               }
           }
       };
@@ -579,36 +571,35 @@ var qc = null;
   exports.mod = function(a, fn) {
       return {
           func: function (size) {
-              return fn(util.generateValue(a, size));
+              return fn(qc.generateValue(a, size));
           }
       };
   };
-  var undefineds = exports.undefineds = function(){
+  var undefineds = exports.undefineds = function() {
     return chooseValue(undefined);
   };
   exports.undefinedOr = function(opt) {
       var d = new Distribution([[10, undefineds()], [90, opt]]);
       return {
           func: function (size) {
-              return util.generateValue(d.pick(), size);
+              return qc.generateValue(d.pick(), size);
           },
           shrink: function (size, a) {
               return a === undefined || a === null ?
                          [] :
-                         util.generateShrunkValues(opt, size, a);
+                         qc.generateShrunkValues(opt, size, a);
           }
       };
   };
   return exports;
-})(__random,__util,__Distribution);
+})(__random,__core,__Distribution);
 
-;var __generator_number=( function(random, base) {
+;var __generator_number=( function(random) {
   var exports = {};
-  exports.integers = function(){
+  exports.integers = function() {
     return {
-      func: function(size){
-        var ret = random.getInteger(size);
-        return ret;
+      func: function(size) {
+        return random.getInteger(size);
       },
       shrink: function (size, x) {
           var tmp = x, ret = [];
@@ -617,7 +608,7 @@ var qc = null;
           }
           while (true) {
               tmp = tmp / 2;
-              if (tmp === 0 || isNaN(tmp)){                   break;
+              if (tmp === 0 || isNaN(tmp)) {                   break;
               }
               tmp = tmp < 0 ? Math.ceil(tmp) : Math.floor(tmp);
               ret.push(x - tmp);
@@ -626,9 +617,11 @@ var qc = null;
       }
     };
   };
-  exports.positiveIntegers = function(){
+  exports.positiveIntegers = function() {
     return {
-      func: random.getPositiveInteger,
+      func: function(size) {
+        return random.getPositiveInteger(size);
+      },
       shrink: function (size, x) {
           var tmp = x, ret = [];
           while (true) {
@@ -641,9 +634,11 @@ var qc = null;
       }
     };
   };
-  exports.floats = function(){
+  exports.floats = function() {
     return {
-      func: random.getFloat,
+      func: function(size) {
+        return random.getFloat(size);
+      },
       shrink: function (size, x) {
           var tmp, ret = [];
           if (x < 0) {
@@ -657,23 +652,33 @@ var qc = null;
       }
     };
   };
-  exports.range = function(minValue, maxValue) {
+  exports.integerRanges = function(minValue, maxValue) {
     var min = Math.min(minValue, maxValue);
     var max = Math.max(minValue, maxValue);
-    var generator = function() {
-      return Math.floor(Math.random() * (max - min)) + min;
+    return {
+      func: function() {
+        return Math.floor(Math.random() * (max - min)) + min;
+      }
     };
-    return { func: generator };
+  };
+  exports.floatRanges = function(minValue, maxValue) {
+    var min = Math.min(minValue, maxValue);
+    var max = Math.max(minValue, maxValue);
+    return {
+      func: function() {
+        return Math.random() * (max - min) + min;
+      }
+    };
   };
   return exports;
-})(__random,__generator_base);
+})(__random);
 
-;var __generator_string=(function(base, number, util) {
+;var __generator_string=(function(qc, base, number) {
   var exports = {};
-  exports.strings = function(){
-      var a = base.arrays(number.range(32, 255));
+  exports.strings = function() {
+      var a = base.arrays(number.integerRanges(32, 255));
       var func = function (size) {
-                    var tmp = util.generateValue(a, size+10);
+                    var tmp = qc.generateValue(a, size+10);
           return String.fromCharCode.apply(String, tmp);
       };
       var shrink = function (size, str) {
@@ -681,7 +686,7 @@ var qc = null;
           for (i = 0; i < str.length; i++) {
               tmp[i] = str.charCodeAt(i);
           }
-          tmp = util.generateShrunkValues(a, size, tmp);
+          tmp = qc.generateShrunkValues(a, size, tmp);
           ret = [];
           for (i = 0; i < tmp.length; i++) {
               ret.push(String.fromCharCode.apply(String, tmp[i]));
@@ -690,29 +695,29 @@ var qc = null;
       };
       return { func: func, shrink: shrink };
   };
-  exports.chararcters = function(){
+  exports.chararcters = function() {
     return base.mod(
-      number.range(32, 255),
+      number.integerRanges(32, 255),
       function (num) { return String.fromCharCode(num); }
     );
   };
   exports.nonEmptys = {
   };
   return exports;
-})(__generator_base,__generator_number,__util);
+})(__core,__generator_base,__generator_number);
 
 ;var __generator___all__=( function(base, number, string) {
       var modules = {
     'number': number,
     'string': string
   };
-    for (var i in base){
+    for (var i in base) {
     modules[i] = base[i];
   }
   return modules;
 })(__generator_base,__generator_number,__generator_string);
 
-;var __Prop=(function(qs, util, Case, Distribution, Fail, Stats) {
+;var __Prop=(function(qc, Case, Distribution, Fail, Stats) {
   function Prop(name, gens, body) {
       this.name = name;
       this.gens = gens;
@@ -722,23 +727,21 @@ var qc = null;
       var i, gen, args = [];
       for (i = 0; i < this.gens.length; i += 1) {
           gen = this.gens[i];
-          args.push(util.generateValue(gen, size));
+          args.push(qc.generateValue(gen, size));
       }
       return args;
   };
-  Prop.prototype.generateShrunkArgs = function (size, args) {
-            var i, idxs, tmp, gen, countShrunk = 0, shrunk = [], newArgs = [];
+  Prop.prototype.generateShrunkArgs = function (size, args, maxShrunkArgs) {
+            var i, gen, countShrunk = 0, shrunk = [], newArgs = [];
       for (i = 0; i < this.gens.length; i++) {
           gen = this.gens[i];
           if ((gen instanceof Function) || gen.shrink === undefined ||
-             gen.shrink === null || !(gen.shrink instanceof Function))
-          {
+             gen.shrink === null || !(gen.shrink instanceof Function)) {
               shrunk.push([args[i]]);
           } else {
               tmp = gen.shrink(size, args[i]);
               if (tmp === undefined ||
-                  (tmp instanceof Array && tmp.length === 0))
-              {
+                  (tmp instanceof Array && tmp.length === 0)) {
                   shrunk.push([args[i]]);
               } else {
                   countShrunk++;
@@ -749,12 +752,12 @@ var qc = null;
       if (countShrunk === 0) {
           return [];
       }
-            idxs = new Array(this.gens.length);
+            var idxs = [];
       for (i = 0; i < this.gens.length; i++) {
           idxs[i] = 0;
       }
             while (idxs[0] < shrunk[0].length) {
-          tmp = new Array(shrunk.length);
+          var tmp = [];
           for (i = 0; i < shrunk.length; i++) {
               tmp[i] = shrunk[i][idxs[i]];
           }
@@ -767,29 +770,41 @@ var qc = null;
                   break;
               }
           }
+      };
+      return reduceToMaxShrunkArgs(newArgs, maxShrunkArgs);
+  };
+  function reduceToMaxShrunkArgs(shrunkArgs, maxShrunkArgs) {
+      if (maxShrunkArgs && shrunkArgs.length>maxShrunkArgs) {
+                                var everyXth = Math.ceil(shrunkArgs.length / maxShrunkArgs);
+        var ret = [];
+        for (var i=0; i<shrunkArgs.length; i+=everyXth) {
+          ret.push(shrunkArgs[i]);
+        }
+        shrunkArgs = ret;
       }
-      return newArgs;
+      return shrunkArgs;
   };
   Prop.prototype.run = function (config) {
-      var args, testCase, dist, shrunkArgs;
-      var stats = new Stats(), size = 0, collected = [];
-      while (config.needsWork(stats)) {
+    var args, testCase, dist, shrunkArgs;
+    var stats = new Stats(), size = 0, collected = [];
+      while (config.needsWork(stats.counts.pass, stats.counts.invalid)) {
           args = this.generateArgs(size);
           testCase = new Case(args);
           try {
-              this.body.apply(this, [testCase].concat(args));
-              stats.incrementPass();
+            this.body.apply(this, [testCase].concat(args));
+            stats.addPass(args);
           }
           catch (e) {
               if (e === 'AssertFailed') {
+                  stats.addFail(args);
                   dist = !testCase.collected ||
                           testCase.collected.length === 0 ?  null :
                               new Distribution(testCase.collected);
-                  shrunkArgs = qs.shrinkLoop(config, this, size, args);
+                  shrunkArgs = this._shrinkLoop(config, size, args, stats);
                   return new Fail(this, stats, args, shrunkArgs,
                                   testCase.tags, dist);
               } else if (e === 'InvalidCase') {
-                  stats.incrementInvalid();
+                stats.addInvalid(args);
               } else {
                   throw (e);
               }
@@ -802,13 +817,49 @@ var qc = null;
                           new Distribution(collected);
       return stats.newResult(this);
   };
+  Prop.prototype._shrinkLoop = function(config, size, args, stats) {
+    var i, testCase;
+    var failedArgs = [args], shrunkArgs = [];
+    for (var loop = 0; loop < config.maxShrink; loop++) {
+            shrunkArgs = [];
+      for (i = 0; i < failedArgs.length; i++) {
+        shrunkArgs = shrunkArgs.concat(
+          this.generateShrunkArgs(size, failedArgs[i], config.maxShrunkArgs));
+      }
+      if (shrunkArgs.length > 0) {
+                failedArgs = [];
+        for (i = 0; i < shrunkArgs.length; i++) {
+          var args = shrunkArgs[i];
+          try {
+            testCase = new Case(args);
+            this.body.apply(this, [testCase].concat(args));
+            stats.addShrinkPass(args);
+          } catch (e) {
+            if (e === 'InvalidCase') {
+              stats.addShrinkInvalid(args);
+            } else if (e === 'AssertFailed') {
+              stats.addShrinkFail(args);
+              if (loop === config.maxShrink - 1) {
+                return args;
+              } else {
+                failedArgs.push(args);
+              }
+            } else {
+              throw e;
+            }
+          }
+        }
+      }
+    }
+    return failedArgs.length === 0 ? null : failedArgs[0];
+  };
   return Prop;
-})(__core,__util,__Case,__Distribution,__Fail,__Stats);
+})(__core,__Case,__Distribution,__Fail,__Stats);
 
 ;var __qc=( function(
-  core, random, util,
+  core, random,
   generator,
-  Config, Distribution, Prop, ConsoleListener, HtmlListener, NodeConsoleListener){
+  Config, Distribution, Prop, ConsoleListener, HtmlListener, NodeConsoleListener) {
   var exports = {
     Config: Config,
     Distribution: Distribution,
@@ -818,8 +869,8 @@ var qc = null;
     NodeConsoleListener: NodeConsoleListener,
     generator: generator
   };
-  [core, random, util].map(function(arg){
-        for (var prop in arg){
+  [core, random].map(function(arg) {
+        for (var prop in arg) {
       exports[prop] = arg[prop];
     }
   });
@@ -829,7 +880,7 @@ var qc = null;
       return theProp;
   };
   return exports;
-})(__core,__random,__util,__generator___all__,__Config,__Distribution,__Prop,__ConsoleListener,__HtmlListener,__NodeConsoleListener);
+})(__core,__random,__generator___all__,__Config,__Distribution,__Prop,__ConsoleListener,__HtmlListener,__NodeConsoleListener);
 
 
 qc = __qc;
