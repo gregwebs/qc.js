@@ -10,22 +10,17 @@
   function main(qc){
     var gen = qc.generator;
 
-    function makeGenerator(func){
-      return { func:func }
-    }
-
-    var distributionArrays = function(){
-      return qc.generateValue(gen.nonEmptyArrays( // Generate an array with at least one of the following elements.
+    var distributionArrays =
+      gen.nonEmptyArrays( // Generate an array with at least one of the following elements.
         gen.arraysOfSize( // Generate an array with a fixed size with the two following elements.
           [
             gen.number.integerRanges(1, 1000), // First element is always a number, the probability.
             gen.string.strings() // Second element is always a string, the value.
           ]
         )
-      ))
-    };
+      );
 
-    qc.declare("getProbablity", [makeGenerator(distributionArrays)],
+    qc.declare('Distribution.getProbability', [distributionArrays],
       function(testCase, value) {
         var d = new qc.Distribution(value);
         // Sum up all probabilities.
@@ -36,7 +31,7 @@
       }
     );
 
-    qc.declare("normalize", [makeGenerator(distributionArrays)],
+    qc.declare('Distribution.normalize', [distributionArrays],
       function(testCase, value) {
         var d = new qc.Distribution(value);
         var sum = d.data.reduce(function(last, curArr){ return last+curArr[0] }, 0);
@@ -45,7 +40,7 @@
       }
     );
 
-    qc.declare("mostProbable", [makeGenerator(distributionArrays)],
+    qc.declare('Distribution.getMostProbable', [distributionArrays],
       function(testCase, value) {
         var d = new qc.Distribution(value);
         var highestProbability = d.data.reduce(function(last, curArr){ return curArr[0] > last[0] ? curArr : last; }, [0]);
@@ -54,7 +49,7 @@
       }
     );
 
-    qc.declare("uniform", [makeGenerator(distributionArrays)],
+    qc.declare('Distribution.uniform', [distributionArrays],
       function(testCase, value) {
         var d = new qc.Distribution.uniform(value);
         // Get all probabilities into the array allProbs.
@@ -66,6 +61,30 @@
             return last;
           }, []); // Return an array with all different ones (Array.unique).
         testCase.assert(allProbs.length==1 && allProbs[0]==d.data[0][0]);
+      }
+    );
+
+// TODO Actually this could be a jasmine test, normal unittesting :)
+
+
+    qc.declare('Distribution.uniform verify multiple values\' weight gets added up', [],
+      function(testCase) {
+        // Just two values' weights should add up.
+        var d = new qc.Distribution.uniform(['one', 'one', 'two', 'three']);
+        var value2weight = {};
+        d.data.forEach(function(val){ value2weight[val[1]] = val[0]; });
+        testCase.assert(value2weight.one == 0.5);
+        testCase.assert(value2weight.two == 0.25);
+        testCase.assert(value2weight.three == 0.25);
+
+        // Some values' weights should add up.
+        var d = new qc.Distribution.uniform(['one', 'one', 'two', 'three', 'one', 'two', 'four', 'one']);
+        var value2weight = {};
+        d.data.forEach(function(val){ value2weight[val[1]] = val[0]; });
+        testCase.assert(value2weight.one == 0.5);
+        testCase.assert(value2weight.two == 0.25);
+        testCase.assert(value2weight.three == 0.125);
+        testCase.assert(value2weight.three == 0.125);
       }
     );
     //*/
