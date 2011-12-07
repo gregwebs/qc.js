@@ -35,7 +35,7 @@ if (process.argv.length == 3){
   exports.main(inputFiles, outputFile, targetNamespace);
 } else {
   var addons = [
-    ['./build-targets/generator-html-files.js', '../dist/qc-generator-html.js', 'qc.generator.html']
+    ['./build-targets/generator-html-files.js ../dist/qc-generator-html.js qc.generator.html'.split(' ')]
   ];
   addons.forEach(function(addon){
     exports.main.apply(null, addon);

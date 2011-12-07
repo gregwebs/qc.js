@@ -3,11 +3,17 @@
 // Tiny javascript quickcheck port.
 
 define('qc', [
-  'core', 'random', 'util',
+  'core',
+  'random',
   'generator/__all__',
-  'Config', 'Distribution', 'Prop', 'ConsoleListener', 'HtmlListener', 'NodeConsoleListener'
+  'Config',
+  'Distribution',
+  'Prop',
+  'ConsoleListener',
+  'HtmlListener',
+  'NodeConsoleListener'
 ], function(
-  core, random, util,
+  core, random,
   generator,
   Config, Distribution, Prop, ConsoleListener, HtmlListener, NodeConsoleListener) {
 
@@ -20,7 +26,7 @@ define('qc', [
     NodeConsoleListener: NodeConsoleListener,
     generator: generator
   };
-  [core, random, util].map(function(arg) {
+  [core, random].map(function(arg) {
     // Add all properties to the exports, mostly its a collection of functions.
     for (var prop in arg) {
       exports[prop] = arg[prop];

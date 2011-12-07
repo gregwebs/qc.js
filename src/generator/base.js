@@ -1,7 +1,8 @@
 define('generator/base', [
-  'random', 'util',
+  'random',
+  'core',
   'Distribution'
-], function(random, util, Distribution) {
+], function(random, qc, Distribution) {
   var exports = {};
 
   /**
@@ -11,7 +12,7 @@ define('generator/base', [
     var d = Distribution.uniform(arguments);
     return {
       func: function (size) {
-          return util.generateValue(d.pick(), size);
+          return qc.generateValue(d.pick(), size);
       },
       shrink: null
     };
@@ -64,7 +65,7 @@ define('generator/base', [
         listSize = Math.max(listSize, minSize);
       }
       for (i = 0; i < listSize; i += 1) {
-        list.push(util.generateValue(generator, size));
+        list.push(qc.generateValue(generator, size));
       }
       return list;
     };
@@ -81,7 +82,7 @@ define('generator/base', [
    */
   exports.arraysOfSize = function(generators, shrinkStrategy) {
     var generator = function(size) {
-      return generators.map(function(g){ return util.generateValue(g, size); });
+      return generators.map(function(g){ return qc.generateValue(g, size); });
     };
     return { func: generator, shrink: shrinkStrategy };
   };
@@ -115,13 +116,13 @@ define('generator/base', [
       var d = new Distribution([[10, nulls()], [90, otherGen]]);
       return {
           func: function (size) {
-                  return util.generateValue(d.pick(), size);
+                  return qc.generateValue(d.pick(), size);
           },
           shrink: function (size, a) {
               if (a === null) {
                   return [];
               } else {
-                  return [null].concat(util.generateShrunkValues(otherGen, size, a));
+                  return [null].concat(qc.generateShrunkValues(otherGen, size, a));
               }
           }
       };
@@ -162,7 +163,7 @@ define('generator/base', [
   exports.mod = function(a, fn) {
       return {
           func: function (size) {
-              return fn(util.generateValue(a, size));
+              return fn(qc.generateValue(a, size));
           }
       };
   };
@@ -180,12 +181,12 @@ define('generator/base', [
       var d = new Distribution([[10, undefineds()], [90, opt]]);
       return {
           func: function (size) {
-              return util.generateValue(d.pick(), size);
+              return qc.generateValue(d.pick(), size);
           },
           shrink: function (size, a) {
               return a === undefined || a === null ?
                          [] :
-                         util.generateShrunkValues(opt, size, a);
+                         qc.generateShrunkValues(opt, size, a);
           }
       };
   };

@@ -11,7 +11,6 @@ exports.files = [
   'Pass',
   'random',
   'Stats',
-  'util',
   'generator/base',
   'generator/number',
   'generator/string',

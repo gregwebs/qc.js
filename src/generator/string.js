@@ -1,8 +1,8 @@
 define('generator/string', [
+  'core',
   'generator/base',
-  'generator/number',
-  'util'
-],function(base, number, util) {
+  'generator/number'
+],function(qc, base, number) {
   var exports = {};
 
   /**
@@ -17,7 +17,7 @@ define('generator/string', [
 
       var func = function (size) {
           // Add 10 to the size to really get a string, not am empty string so often in the beginning.
-          var tmp = util.generateValue(a, size+10);
+          var tmp = qc.generateValue(a, size+10);
           return String.fromCharCode.apply(String, tmp);
       };
 
@@ -27,7 +27,7 @@ define('generator/string', [
               tmp[i] = str.charCodeAt(i);
           }
 
-          tmp = util.generateShrunkValues(a, size, tmp);
+          tmp = qc.generateShrunkValues(a, size, tmp);
           ret = [];
           for (i = 0; i < tmp.length; i++) {
               ret.push(String.fromCharCode.apply(String, tmp[i]));
