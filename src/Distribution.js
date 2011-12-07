@@ -5,30 +5,39 @@ define('Distribution', function() {
    * @class
    */
   function Distribution(d) {
+    this.data = addUpSameValues(d);
+    this.normalize();
+    this.length = this.data.length;
+  }
 
-      /** @ignore */
-      function incBy(data, key, x) {
-          var found = false, i;
-          for (i = 0; i < data.length; i++) {
-              if (data[i][1] === key) {
-                  data[i][0] += x;
-                  found = true;
-                  break;
-              }
+  /**
+   * Add the weights for the same values.
+   * I.e. data like this:
+   *    [1, 'one'], [1, 'one'], [1, 'two']
+   * should be summarizes to this
+   *    [2, 'one'], [1, 'two']
+   */
+  function addUpSameValues(data){
+    var ret = [];
+    if (data.length>0){
+      ret[0] = data[0];
+      for (var i=1, l=data.length; i<l; i++){
+        var val = data[i][1];
+        // Find it in ret, and add the weights or push it into ret.
+        var wasFound = false;
+        for (var j=0, l1=ret.length; j<l1; j++){
+          if (val==ret[j][1]){
+            ret[j][0] += data[i][0];
+            wasFound = true;
+            break;
           }
-          if (!found) {
-              data.push([x, key]);
-          }
+        }
+        if (!wasFound){
+          ret.push(data[i]);
+        }
       }
-
-      var data = [], j;
-      for (j = 0; j < d.length; j++) {
-          incBy(data, d[j][1], d[j][0]);
-      }
-
-      this.data = data;
-      this.normalize();
-      this.length = this.data.length;
+    }
+    return ret;
   }
 
   /**
@@ -100,11 +109,11 @@ define('Distribution', function() {
    * @return a new Distribution object
    */
   Distribution.uniform = function (data) {
-      var i, tmp = new Array(data.length);
-      for (i = 0; i < data.length; i++) {
-          tmp[i] = ([1, data[i]]);
-      }
-      return new Distribution(tmp);
+    var ret = [];
+    for (var i=0, l=data.length; i<l; i++){
+      ret.push([1, data[i]]);
+    }
+    return new Distribution(ret);
   };
 
   return Distribution;
