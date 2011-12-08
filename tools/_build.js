@@ -26,8 +26,9 @@ exports.readSource = function(inputFiles){
 exports.stripComments = function(src){
   printWithoutNewline('Stripping, ');
   src = src
-    .replace(/\/\/[^\n]+\n*/g, '') // Remove // comments.
+    // Make sure to remove /*..*/ first so we dont get trapped by my speciality '//*/' :)
     .replace(/\/\*([^*]|[\r\n]|(\*+([^*/]|[\r\n])))*\*+\//g, '') // Remove /**/ comments, thx to http://ostermiller.org/findcomment.html
+    .replace(/\/\/[^\n]+\n*/g, '') // Remove // comments.
     .replace(/\n\s*\n/g, '\n'); // Remove empty lines.
   return src;
 }
