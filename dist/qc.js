@@ -46,6 +46,14 @@ var qc = null;
     this.maxShrink = parseInt(params.maxShrink) || 1;
     this.maxShrunkArgs = parseInt(params.maxShrunkArgs) || 100;
     this.searchString = params.searchString || '';
+    if (params.allowConfigByUrlParams && window.location.search){
+      var parts = window.location.search.replace(/\?/, '').split('&');
+      var self = this;
+      parts.forEach(function(p){
+        var keyValue = p.split('=');
+        if (typeof self[keyValue[0]] != 'undefined') self[keyValue[0]] = keyValue[1];
+      });
+    }
   }
   Config.prototype.needsWork = function (numPass, numInvalid) {
       return numInvalid < this.maxInvalid &&
