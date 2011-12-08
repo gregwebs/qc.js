@@ -8,5 +8,6 @@ require('./random.js');
 require('../examples/stringSplitter');
 require('../test/generator-html');
 
-var config = new qc.Config(100, 10, 100);
-qc.runAllProps(config, new qc.NodeConsoleListener());
+var params = {searchString:process.argv[2] || '', maxPass:200, maxShrink:3, maxShrunkArgs:100};
+var config = new qc.Config(params);
+qc.runProps(config, new qc.NodeConsoleListener());
