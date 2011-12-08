@@ -10,17 +10,38 @@
   function main(qc){
     var gen = qc.generator;
 
-    var distributionArrays =
-      gen.nonEmptyArrays( // Generate an array with at least one of the following elements.
-        gen.arraysOfSize( // Generate an array with a fixed size with the two following elements.
-          [
-            gen.number.integerRanges(1, 1000), // First element is always a number, the probability.
-            gen.string.strings() // Second element is always a string, the value.
-          ]
-        )
-      );
+    function distrArrayFunc(size){
+        return qc.generateValue(
+          gen.nonEmptyArrays( // Generate an array with at least one of the following elements.
+            gen.arraysOfSize( // Generate an array with a fixed size with the two following elements.
+              [
+                gen.number.integerRanges(1, 100), // First element is always a number, the probability.
+                gen.string.strings() // Second element is always a string, the value.
+              ]
+            )
+          )
+        , size);
+    };
 
-    qc.declare('Distribution.getProbability', [distributionArrays],
+    var distributionArrays = {func:distrArrayFunc};
+
+    // Make sure every value in here is unique, needed in getProbability() test.
+    var distributionUniqueArrays = function(){
+      return {
+        func:function(size){
+          var ret = [];
+          var tmp = distrArrayFunc(size);
+          for (var i=0, l=tmp.length; i<l; i++){
+            if (!ret.some(function(arr){ return tmp[i][1] == arr[1] })){
+              ret.push(tmp[i]);
+            }
+          }
+          return ret;
+        }
+      }
+    };
+
+    qc.declare('Distribution.getProbability', [distributionUniqueArrays()],
       function(testCase, value) {
         var d = new qc.Distribution(value);
         // Sum up all probabilities.
@@ -68,7 +89,7 @@
 
 
     qc.declare('Distribution.uniform verify multiple values\' weight gets added up', [],
-      function(testCase) {
+      function(testCase, value) {
         // Just two values' weights should add up.
         var d = new qc.Distribution.uniform(['one', 'one', 'two', 'three']);
         var value2weight = {};
@@ -76,6 +97,17 @@
         testCase.assert(value2weight.one == 0.5);
         testCase.assert(value2weight.two == 0.25);
         testCase.assert(value2weight.three == 0.25);
+
+        // Some empty values.
+        var d = new qc.Distribution.uniform(['', '', 'one', "", 'two', "ßáÊ¤I)Ë+Å³", "1^Ì/éØ§°øHÂövãüÛPÇCHÎþi¸HªF", '']);
+        var value2weight = {};
+        d.data.forEach(function(val){ value2weight[val[1]] = val[0]; });
+        testCase.assert(value2weight['one'] == 0.125);
+        testCase.assert(value2weight.two == 0.125);
+        testCase.assert(value2weight[''] == 0.5);
+        testCase.assert(d.getProbability('one') == 0.125);
+        testCase.assert(d.getProbability('two') == 0.125);
+        testCase.assert(d.getProbability('') == 0.5);
 
         // Some values' weights should add up.
         var d = new qc.Distribution.uniform(['one', 'one', 'two', 'three', 'one', 'two', 'four', 'one']);
