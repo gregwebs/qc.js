@@ -14,17 +14,29 @@ define('HtmlListener', [
     this._domNode = document.getElementById(params.nodeId);
   }
   HtmlListener.prototype = new ConsoleListener();
-  HtmlListener.prototype.passed = function (str) {
+
+  function getResultHtml(result){
+    var html = '<b>$result:</b> $name --- $passesx Pass, $failsx Fail, $invalidsx Invalids<br/>';
+    html = html.replace('$result', result.status.toUpperCase());
+    html = html.replace('$name', result.name);
+    html = html.replace('$passes', result.stats.counts.pass);
+    html = html.replace('$fails', result.stats.counts.fail);
+    html = html.replace('$invalids', result.stats.counts.invalid);
+    return html;
+  }
+
+  HtmlListener.prototype.passed = function (result) {
     if (this._showPassedTests) {
-//      this._domNode.innerHTML += str.status + ': ' + str.name + ' -- ' + JSON.stringify(str.stats) + '<br>';
-      this._domNode.innerHTML += str + '<br>';
+      this._domNode.innerHTML += getResultHtml(result);
     }
   };
-  HtmlListener.prototype.invalid = function (str) {
-    this._domNode.innerHTML += str + '<br>';
+  HtmlListener.prototype.invalid = function (result) {
+    this._domNode.innerHTML += getResultHtml(result);
   };
-  HtmlListener.prototype.failure = function (str) {
-    this._domNode.innerHTML += str + '<br>';
+  HtmlListener.prototype.failure = function (result) {
+    var html = getResultHtml(result) + 'Failed with<pre>$failedCase</pre>';
+    html = html.replace('$failedCase', JSON.stringify(result.failedCase));
+    this._domNode.innerHTML += html;
   };
   HtmlListener.prototype.log = function (str) {
     this._domNode.innerHTML += str + '<br>';
