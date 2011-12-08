@@ -20,20 +20,20 @@ define('Distribution', function() {
   function addUpSameValues(data){
     var ret = [];
     if (data.length>0){
-      ret[0] = data[0];
+      ret[0] = [data[0][0], data[0][1]];
       for (var i=1, l=data.length; i<l; i++){
         var val = data[i][1];
         // Find it in ret, and add the weights or push it into ret.
         var wasFound = false;
         for (var j=0, l1=ret.length; j<l1; j++){
-          if (val==ret[j][1]){
+          if (val == ret[j][1]){
             ret[j][0] += data[i][0];
             wasFound = true;
             break;
           }
         }
         if (!wasFound){
-          ret.push(data[i]);
+          ret.push([data[i][0], data[i][1]]);
         }
       }
     }
