@@ -139,6 +139,7 @@ console.log('shrink',JSON.stringify(result.stats.shrinkCounts));
   };
   HtmlListener.prototype.done = function (str) {
     this._domNode.innerHTML += 'DONE.';
+console.profileEnd(1);
   };
   return HtmlListener;
 })(__ConsoleListener);
@@ -164,26 +165,30 @@ console.log('shrink',JSON.stringify(result.stats.shrinkCounts));
 
 ;var __Distribution=( function() {
   function Distribution(d) {
-      function incBy(data, key, x) {
-          var found = false, i;
-          for (i = 0; i < data.length; i++) {
-              if (data[i][1] === key) {
-                  data[i][0] += x;
-                  found = true;
-                  break;
-              }
+    this.data = addUpSameValues(d);
+    this.normalize();
+    this.length = this.data.length;
+  }
+  function addUpSameValues(data){
+    var ret = [];
+    if (data.length>0){
+      ret[0] = [data[0][0], data[0][1]];
+      for (var i=1, l=data.length; i<l; i++){
+        var val = data[i][1];
+                var wasFound = false;
+        for (var j=0, l1=ret.length; j<l1; j++){
+          if (val == ret[j][1]){
+            ret[j][0] += data[i][0];
+            wasFound = true;
+            break;
           }
-          if (!found) {
-              data.push([x, key]);
-          }
+        }
+        if (!wasFound){
+          ret.push([data[i][0], data[i][1]]);
+        }
       }
-      var data = [], j;
-      for (j = 0; j < d.length; j++) {
-          incBy(data, d[j][1], d[j][0]);
-      }
-      this.data = data;
-      this.normalize();
-      this.length = this.data.length;
+    }
+    return ret;
   }
   Distribution.prototype.normalize = function () {
       var sum = 0, i;
@@ -222,11 +227,11 @@ console.log('shrink',JSON.stringify(result.stats.shrinkCounts));
       }
   };
   Distribution.uniform = function (data) {
-      var i, tmp = new Array(data.length);
-      for (i = 0; i < data.length; i++) {
-          tmp[i] = ([1, data[i]]);
-      }
-      return new Distribution(tmp);
+    var ret = [];
+    for (var i=0, l=data.length; i<l; i++){
+      ret.push([1, data[i]]);
+    }
+    return new Distribution(ret);
   };
   return Distribution;
 })();
@@ -653,20 +658,20 @@ console.log('shrink',JSON.stringify(result.stats.shrinkCounts));
     };
   };
   exports.integerRanges = function(minValue, maxValue) {
-    var min = Math.min(minValue, maxValue);
-    var max = Math.max(minValue, maxValue);
-    return {
+    var min = minValue < maxValue ? minValue : maxValue;
+    var max = minValue < maxValue ? maxValue : minValue;
+    var maxMinusMin = max - min;     return {
       func: function() {
-        return Math.floor(Math.random() * (max - min)) + min;
+        return Math.floor(Math.random() * maxMinusMin) + min;
       }
     };
   };
   exports.floatRanges = function(minValue, maxValue) {
-    var min = Math.min(minValue, maxValue);
-    var max = Math.max(minValue, maxValue);
-    return {
+    var min = minValue < maxValue ? minValue : maxValue;
+    var max = minValue < maxValue ? maxValue : minValue;
+    var maxMinusMin = max - min;     return {
       func: function() {
-        return Math.random() * (max - min) + min;
+        return Math.random() * maxMinusMin + min;
       }
     };
   };
