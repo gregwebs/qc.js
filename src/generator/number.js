@@ -90,9 +90,10 @@ define('generator/number', [
   exports.integerRanges = function(minValue, maxValue) {
     var min = minValue < maxValue ? minValue : maxValue;
     var max = minValue < maxValue ? maxValue : minValue;
+    var maxMinusMin = max - min; // Precalculate this here, for a bit of speed.
     return {
       func: function() {
-        return Math.floor(Math.random() * (max - min)) + min;
+        return Math.floor(Math.random() * maxMinusMin) + min;
       }
     };
   };
@@ -100,9 +101,10 @@ define('generator/number', [
   exports.floatRanges = function(minValue, maxValue) {
     var min = minValue < maxValue ? minValue : maxValue;
     var max = minValue < maxValue ? maxValue : minValue;
+    var maxMinusMin = max - min; // Precalculate this here, for a bit of speed.
     return {
       func: function() {
-        return Math.random() * (max - min) + min;
+        return Math.random() * maxMinusMin + min;
       }
     };
   };
