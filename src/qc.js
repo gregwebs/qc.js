@@ -54,7 +54,9 @@ define('qc', [
   var testGroupName = '';
   exports.setTestGroupName = function(groupName) {
     testGroupName = groupName;
+    exports.groupNames.push(groupName);
   };
+  exports.groupNames = [];
 
   return exports;
 });
