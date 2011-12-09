@@ -13,6 +13,7 @@ define('browser-tests', ['qc'], function(qc){
     '../test/generator-html',
 
   ], function(UxebuCiListener){
-    qc.runProps(config, new UxebuCiListener({nodeId:'testresults', showPassedTests:true}));
+    qc.runProps(config, new UxebuCiListener({nodeId:'testresults', filterNodeId:'filter', showPassedTests:true}));
   });
 });
+
