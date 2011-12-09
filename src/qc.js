@@ -46,9 +46,14 @@ define('qc', [
    * @return a new registered Property object.
    */
   exports.declare = function(name, gens, body) {
-      var theProp = new exports.Prop(name, gens, body);
+      var theProp = new exports.Prop(name, gens, body, testGroupName);
       exports.allProps.push(theProp);
       return theProp;
+  };
+
+  var testGroupName = '';
+  exports.setTestGroupName = function(groupName) {
+    testGroupName = groupName;
   };
 
   return exports;

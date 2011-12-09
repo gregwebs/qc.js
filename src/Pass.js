@@ -16,6 +16,7 @@ define('Pass', function() {
 
       /** The property its name.*/
       this.name = prop.name;
+      this.groupName = prop.groupName;
   }
 
   Pass.prototype.toString = function () {

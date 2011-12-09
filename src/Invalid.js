@@ -9,6 +9,7 @@ define('Invalid', function() {
       this.prop = prop;
       this.stats = stats;
       this.name = prop.name;
+      this.groupName = prop.groupName;
   }
 
   Invalid.prototype.toString = function () {

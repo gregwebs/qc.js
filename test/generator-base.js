@@ -8,6 +8,7 @@
   }
 
   function main(qc){
+    qc.setTestGroupName('generator-base.js');
     var gen = qc.generator;
 
     var consts = [1, 'one', 'uno'];

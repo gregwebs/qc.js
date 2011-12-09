@@ -16,8 +16,9 @@ define('HtmlListener', [
   HtmlListener.prototype = new ConsoleListener();
 
   function getResultHtml(result){
-    var html = '<b>$result:</b> $name --- $passesx Pass, $failsx Fail, $invalidsx Invalids<br/>';
+    var html = '<b>$result:</b> $groupName: $name --- $passesx Pass, $failsx Fail, $invalidsx Invalids<br/>';
     html = html.replace('$result', result.status.toUpperCase());
+    html = html.replace('$groupName', result.groupName);
     html = html.replace('$name', result.name);
     html = html.replace('$passes', result.stats.counts.pass);
     html = html.replace('$fails', result.stats.counts.fail);

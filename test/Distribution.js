@@ -8,6 +8,7 @@
   }
 
   function main(qc){
+    qc.setTestGroupName('Distribution.js');
     var gen = qc.generator;
 
     function distrArrayFunc(size){

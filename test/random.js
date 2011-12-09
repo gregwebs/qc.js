@@ -12,6 +12,7 @@
   }
 
   function main(qc){
+    qc.setTestGroupName('random.js');
     qc.declare("random integer", [makeGenerator(qc.getInteger)],
       function(c, a) {
         c.assert(!isNaN(a) && parseInt(a)===a);

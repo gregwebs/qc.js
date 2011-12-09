@@ -13,6 +13,7 @@
   }
 
   function main(qc, htmlColorGenerator){
+    qc.setTestGroupName('generator-html.js');
 
     var regexps = {
       hexUpperCase3: /#[A-Z0-9]{3}/,

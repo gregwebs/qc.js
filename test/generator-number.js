@@ -8,6 +8,7 @@
   }
 
   function main(qc){
+    qc.setTestGroupName('generator-number.js');
     var gen = qc.generator.number;
 
     qc.declare("integers", [gen.integers()],

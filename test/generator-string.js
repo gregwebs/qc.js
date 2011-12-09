@@ -8,6 +8,7 @@
   }
 
   function main(qc){
+    qc.setTestGroupName('generator-string.js');
     var gen = qc.generator;
 
     qc.declare("strings", [gen.string.strings()],

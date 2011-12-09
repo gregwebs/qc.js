@@ -9,6 +9,7 @@ define('Fail', function() {
       this.failedCase = failedCase;
       this.shrinkedArgs = shrinkedArgs;
       this.name = prop.name;
+      this.groupName = prop.groupName;
   }
 
   Fail.prototype.toString = function () {

@@ -13,10 +13,11 @@ define('Prop', [
    *
    * @class
    */
-  function Prop(name, gens, body) {
-      this.name = name;
-      this.gens = gens;
-      this.body = body;
+  function Prop(name, gens, body, groupName) {
+    this.name = name;
+    this.gens = gens;
+    this.body = body;
+    this.groupName = groupName;
   }
 
   /**

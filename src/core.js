@@ -60,13 +60,13 @@ define('core', [
       // The search string is a regular expression, it starts and ends with "/".
       var regexp = new RegExp(searchString.slice(1, -1));
       ret = allProps.filter(function(prop) {
-        return prop.name.match(regexp);
+        return prop.name.match(regexp) || prop.groupName.match(regexp);
       });
     } else {
       // The search string is a pure stirng.
       var searchFor = searchString.toLowerCase();
       ret = allProps.filter(function(prop) {
-        return prop.name.toLowerCase().indexOf(searchFor) != -1;
+        return (prop.name.toLowerCase().indexOf(searchFor) != -1) || (prop.groupName.toLowerCase().indexOf(searchFor) != -1);
       });
     }
     return ret;
