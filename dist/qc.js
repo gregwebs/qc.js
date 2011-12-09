@@ -127,11 +127,15 @@ var qc = null;
     this.maxCollected = 0;
     this._showPassedTests = params.showPassedTests || true;
     this._domNode = document.getElementById(params.nodeId);
+    if (params.filterNodeId){
+      renderFilterHtml(params.filterNodeId);
+    }
   }
   HtmlListener.prototype = new ConsoleListener();
   function getResultHtml(result){
-    var html = '<b>$result:</b> $name --- $passesx Pass, $failsx Fail, $invalidsx Invalids<br/>';
+    var html = '<b>$result:</b> $groupName: $name --- $passesx Pass, $failsx Fail, $invalidsx Invalids<br/>';
     html = html.replace('$result', result.status.toUpperCase());
+    html = html.replace('$groupName', result.groupName);
     html = html.replace('$name', result.name);
     html = html.replace('$passes', result.stats.counts.pass);
     html = html.replace('$fails', result.stats.counts.fail);
@@ -157,6 +161,54 @@ var qc = null;
   HtmlListener.prototype.done = function (str) {
     this._domNode.innerHTML += 'DONE.';
   };
+  function parseQuery(){
+    var link = window.location.href;
+    var query = {};
+    if (window.location.search){
+      var parts = window.location.search.replace(/\?/, '').split('&');
+      parts.forEach(function(p){
+        var keyValue = p.split('=');
+        query[keyValue[0]] = keyValue[1];
+      });
+    }
+    return query;
+  }
+  function renderFilterHtml(nodeId){
+    var node = document.getElementById(nodeId);
+    node.appendChild(buildTestLinks());
+    node.appendChild(buildMaxPassLinks());
+    node.innerHTML += '<hr/>';
+  }
+  function getQueryString(query){
+    var ret = [];
+    for (var i in query){
+      ret.push(i + '=' + query[i]);
+    }
+    return ret.join('&');
+  }
+  function buildTestLinks(){
+    var query = parseQuery();
+    var node = document.createElement('div');
+    node.innerHTML = 'filter groups: ';
+    delete query.searchString;
+    node.innerHTML += '<a href=?'+ getQueryString(query) +'>All tests</a> ::: ';
+    qc.groupNames.sort().forEach(function(name){
+      query.searchString = name;
+      node.innerHTML += '<a href=?'+ getQueryString(query) +'>'+name+'</a> ';
+    });
+    return node;
+  }
+  function buildMaxPassLinks(){
+    var query = parseQuery();
+    var node = document.createElement('div');
+    node.innerHTML = 'max passes: ';
+    var maxPasses = [100, 500, 1000, 10000, 100000];
+    for (var i=0; i<maxPasses.length; i++){
+      query.maxPass = maxPasses[i];
+      node.innerHTML += ' <a href=?'+ getQueryString(query) +'>' + maxPasses[i] + '</a> ';
+    }
+    return node;
+  }
   return HtmlListener;
 })(__ConsoleListener);
 
@@ -260,6 +312,7 @@ var qc = null;
       this.failedCase = failedCase;
       this.shrinkedArgs = shrinkedArgs;
       this.name = prop.name;
+      this.groupName = prop.groupName;
   }
   Fail.prototype.toString = function () {
       function tagstr(tags) {
@@ -320,12 +373,12 @@ var qc = null;
     }else if (searchString.match(/^\/.*\/$/)) {
             var regexp = new RegExp(searchString.slice(1, -1));
       ret = allProps.filter(function(prop) {
-        return prop.name.match(regexp);
+        return prop.name.match(regexp) || prop.groupName.match(regexp);
       });
     } else {
             var searchFor = searchString.toLowerCase();
       ret = allProps.filter(function(prop) {
-        return prop.name.toLowerCase().indexOf(searchFor) != -1;
+        return (prop.name.toLowerCase().indexOf(searchFor) != -1) || (prop.groupName.toLowerCase().indexOf(searchFor) != -1);
       });
     }
     return ret;
@@ -392,6 +445,7 @@ var qc = null;
       this.prop = prop;
       this.stats = stats;
       this.name = prop.name;
+      this.groupName = prop.groupName;
   }
   Invalid.prototype.toString = function () {
       return 'Invalid (' + this.name + ') counts=' + this.stats;
@@ -405,6 +459,7 @@ var qc = null;
       this.prop = prop;
       this.stats = stats;
       this.name = prop.name;
+      this.groupName = prop.groupName;
   }
   Pass.prototype.toString = function () {
       return 'Pass (' + this.name + ') counts=' + this.stats;
@@ -756,10 +811,11 @@ var qc = null;
 })(__generator_base,__generator_number,__generator_string);
 
 ;var __Prop=(function(qc, Case, Distribution, Fail, Stats) {
-  function Prop(name, gens, body) {
-      this.name = name;
-      this.gens = gens;
-      this.body = body;
+  function Prop(name, gens, body, groupName) {
+    this.name = name;
+    this.gens = gens;
+    this.body = body;
+    this.groupName = groupName;
   }
   Prop.prototype.generateArgs = function (size) {
       var i, gen, args = [];
@@ -825,35 +881,33 @@ var qc = null;
   Prop.prototype.run = function (config) {
     var args, testCase, dist, shrunkArgs;
     var stats = new Stats(), size = 0, collected = [];
-      while (config.needsWork(stats.counts.pass, stats.counts.invalid)) {
-          args = this.generateArgs(size);
-          testCase = new Case(args);
-          try {
-            this.body.apply(this, [testCase].concat(args));
-            stats.addPass(args);
-          }
-          catch (e) {
-              if (e === 'AssertFailed') {
-                  stats.addFail(args);
-                  dist = !testCase.collected ||
-                          testCase.collected.length === 0 ?  null :
-                              new Distribution(testCase.collected);
-                  shrunkArgs = this._shrinkLoop(config, size, args, stats);
-                  return new Fail(this, stats, args, shrunkArgs,
-                                  testCase.tags, dist);
-              } else if (e === 'InvalidCase') {
-                stats.addInvalid(args);
-              } else {
-                  throw (e);
-              }
-          }
-          size += 1;
-          stats.addTags(testCase.tags);
-          collected = collected.concat(testCase.collected);
+    while (config.needsWork(stats.counts.pass, stats.counts.invalid)) {
+      args = this.generateArgs(size);
+      testCase = new Case(args);
+      try {
+        this.body.apply(this, [testCase].concat(args));
+        stats.addPass(args);
       }
-      stats.collected = !collected || collected.length === 0 ? null :
-                          new Distribution(collected);
-      return stats.newResult(this);
+      catch (e) {
+        if (e === 'AssertFailed') {
+          stats.addFail(args);
+          dist = !testCase.collected ||
+            testCase.collected.length === 0 ?  null : new Distribution(testCase.collected);
+          shrunkArgs = this._shrinkLoop(config, size, args, stats);
+          return new Fail(this, stats, args, shrunkArgs, testCase.tags, dist);
+        } else if (e === 'InvalidCase') {
+          stats.addInvalid(args);
+        } else {
+          throw (e);
+        }
+      }
+      size += 1;
+      stats.addTags(testCase.tags);
+      collected = collected.concat(testCase.collected);
+    }
+    stats.collected = !collected ||
+      collected.length === 0 ? null : new Distribution(collected);
+    return stats.newResult(this);
   };
   Prop.prototype._shrinkLoop = function(config, size, args, stats) {
     var i, testCase;
@@ -913,10 +967,16 @@ var qc = null;
     }
   });
   exports.declare = function(name, gens, body) {
-      var theProp = new exports.Prop(name, gens, body);
+      var theProp = new exports.Prop(name, gens, body, testGroupName);
       exports.allProps.push(theProp);
       return theProp;
   };
+  var testGroupName = '';
+  exports.setTestGroupName = function(groupName) {
+    testGroupName = groupName;
+    exports.groupNames.push(groupName);
+  };
+  exports.groupNames = [];
   return exports;
 })(__core,__random,__generator___all__,__Config,__Distribution,__Prop,__ConsoleListener,__HtmlListener,__NodeConsoleListener);
 
