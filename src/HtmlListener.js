@@ -12,6 +12,9 @@ define('HtmlListener', [
     this.maxCollected = 0;
     this._showPassedTests = params.showPassedTests || true;
     this._domNode = document.getElementById(params.nodeId);
+    if (params.filterNodeId){
+      renderFilterHtml(params.filterNodeId);
+    }
   }
   HtmlListener.prototype = new ConsoleListener();
 
@@ -45,6 +48,63 @@ define('HtmlListener', [
   HtmlListener.prototype.done = function (str) {
     this._domNode.innerHTML += 'DONE.';
   };
+
+  function parseQuery(){
+    var link = window.location.href;
+    var query = {};
+    if (window.location.search){
+      var parts = window.location.search.replace(/\?/, '').split('&');
+      parts.forEach(function(p){
+        var keyValue = p.split('=');
+        query[keyValue[0]] = keyValue[1];
+      });
+    }
+    return query;
+  }
+
+//<div>Filter the tests</div>
+//<div>max passes: <span id=maxPass></span></div>
+//<hr/>
+
+  function renderFilterHtml(nodeId){
+    var node = document.getElementById(nodeId);
+    node.appendChild(buildTestLinks());
+    node.appendChild(buildMaxPassLinks());
+    node.innerHTML += '<hr/>';
+  }
+
+  function getQueryString(query){
+    var ret = [];
+    for (var i in query){
+      ret.push(i + '=' + query[i]);
+    }
+    return ret.join('&');
+  }
+
+  function buildTestLinks(){
+    var query = parseQuery();
+    var node = document.createElement('div');
+    node.innerHTML = 'filter groups: ';
+    delete query.searchString;
+    node.innerHTML += '<a href=?'+ getQueryString(query) +'>All tests</a> ::: ';
+    qc.groupNames.sort().forEach(function(name){
+      query.searchString = name;
+      node.innerHTML += '<a href=?'+ getQueryString(query) +'>'+name+'</a> ';
+    });
+    return node;
+  }
+
+  function buildMaxPassLinks(){
+    var query = parseQuery();
+    var node = document.createElement('div');
+    node.innerHTML = 'max passes: ';
+    var maxPasses = [100, 500, 1000, 10000, 100000];
+    for (var i=0; i<maxPasses.length; i++){
+      query.maxPass = maxPasses[i];
+      node.innerHTML += ' <a href=?'+ getQueryString(query) +'>' + maxPasses[i] + '</a> ';
+    }
+    return node;
+  }
 
   return HtmlListener;
 });
