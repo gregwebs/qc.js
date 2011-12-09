@@ -119,38 +119,33 @@ define('Prop', [
     var args, testCase, dist, shrunkArgs;
     var stats = new Stats(), size = 0, collected = [];
 
-      while (config.needsWork(stats.counts.pass, stats.counts.invalid)) {
-          args = this.generateArgs(size);
-          testCase = new Case(args);
-          try {
-            this.body.apply(this, [testCase].concat(args));
-            stats.addPass(args);
-          }
-          catch (e) {
-              if (e === 'AssertFailed') {
-                  stats.addFail(args);
-                  dist = !testCase.collected ||
-                          testCase.collected.length === 0 ?  null :
-                              new Distribution(testCase.collected);
-
-                  shrunkArgs = this._shrinkLoop(config, size, args, stats);
-                  return new Fail(this, stats, args, shrunkArgs,
-                                  testCase.tags, dist);
-              } else if (e === 'InvalidCase') {
-                stats.addInvalid(args);
-              } else {
-                  throw (e);
-              }
-          }
-          size += 1;
-          stats.addTags(testCase.tags);
-          collected = collected.concat(testCase.collected);
+    while (config.needsWork(stats.counts.pass, stats.counts.invalid)) {
+      args = this.generateArgs(size);
+      testCase = new Case(args);
+      try {
+        this.body.apply(this, [testCase].concat(args));
+        stats.addPass(args);
       }
-
-      stats.collected = !collected || collected.length === 0 ? null :
-                          new Distribution(collected);
-
-      return stats.newResult(this);
+      catch (e) {
+        if (e === 'AssertFailed') {
+          stats.addFail(args);
+          dist = !testCase.collected ||
+            testCase.collected.length === 0 ?  null : new Distribution(testCase.collected);
+          shrunkArgs = this._shrinkLoop(config, size, args, stats);
+          return new Fail(this, stats, args, shrunkArgs, testCase.tags, dist);
+        } else if (e === 'InvalidCase') {
+          stats.addInvalid(args);
+        } else {
+          throw (e);
+        }
+      }
+      size += 1;
+      stats.addTags(testCase.tags);
+      collected = collected.concat(testCase.collected);
+    }
+    stats.collected = !collected ||
+      collected.length === 0 ? null : new Distribution(collected);
+    return stats.newResult(this);
   };
 
   /**
