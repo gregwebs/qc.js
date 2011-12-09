@@ -68,8 +68,6 @@ var qc = null;
   }
   ConsoleListener.prototype.noteResult = function (result) {
       var i, tags, tag, distr, d;
-console.log(JSON.stringify(result.stats.counts));
-console.log('shrink',JSON.stringify(result.stats.shrinkCounts));
       if (result.status === 'pass') {
         this.passed(result);
       } else if (result.status === 'fail') {
@@ -131,23 +129,33 @@ console.log('shrink',JSON.stringify(result.stats.shrinkCounts));
     this._domNode = document.getElementById(params.nodeId);
   }
   HtmlListener.prototype = new ConsoleListener();
-  HtmlListener.prototype.passed = function (str) {
+  function getResultHtml(result){
+    var html = '<b>$result:</b> $name --- $passesx Pass, $failsx Fail, $invalidsx Invalids<br/>';
+    html = html.replace('$result', result.status.toUpperCase());
+    html = html.replace('$name', result.name);
+    html = html.replace('$passes', result.stats.counts.pass);
+    html = html.replace('$fails', result.stats.counts.fail);
+    html = html.replace('$invalids', result.stats.counts.invalid);
+    return html;
+  }
+  HtmlListener.prototype.passed = function (result) {
     if (this._showPassedTests) {
-      this._domNode.innerHTML += str + '<br>';
+      this._domNode.innerHTML += getResultHtml(result);
     }
   };
-  HtmlListener.prototype.invalid = function (str) {
-    this._domNode.innerHTML += str + '<br>';
+  HtmlListener.prototype.invalid = function (result) {
+    this._domNode.innerHTML += getResultHtml(result);
   };
-  HtmlListener.prototype.failure = function (str) {
-    this._domNode.innerHTML += str + '<br>';
+  HtmlListener.prototype.failure = function (result) {
+    var html = getResultHtml(result) + 'Failed with<pre>$failedCase</pre>';
+    html = html.replace('$failedCase', JSON.stringify(result.failedCase));
+    this._domNode.innerHTML += html;
   };
   HtmlListener.prototype.log = function (str) {
     this._domNode.innerHTML += str + '<br>';
   };
   HtmlListener.prototype.done = function (str) {
     this._domNode.innerHTML += 'DONE.';
-console.profileEnd(1);
   };
   return HtmlListener;
 })(__ConsoleListener);
@@ -499,6 +507,23 @@ console.profileEnd(1);
     return {
       func: function (size) {
           return qc.generateValue(d.pick(), size);
+      },
+      shrink: null
+    };
+  };
+  exports.chooseGenerators = function() {
+    var gens = [].slice.call(arguments);
+    return {
+      func: function (size) {
+        var ret = [];
+        while(ret.length==0){
+          for (var i=0, l=gens.length; i<l; i++){
+            if (Math.random() > 0.5){
+              ret.push(qc.generateValue(gens[i], size));
+            }
+          }
+        }
+        return ret;
       },
       shrink: null
     };
