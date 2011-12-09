@@ -11,17 +11,35 @@
     var gen = qc.generator;
 
     var consts = [1, 'one', 'uno'];
-    qc.declare("chooseValue", [gen.chooseValue.apply(null, consts)],
+    qc.declare(
+      'chooseValue',
+      [gen.chooseValue.apply(null, consts)],
       function(testCase, value) {
         testCase.assert(consts.indexOf(value) != -1);
       }
     );
 
     qc.declare(
-      "choose from (positive) integers",
+      'choose from (positive) integers',
       [gen.chooseGenerator(gen.number.integers(), gen.number.positiveIntegers())],
       function(testCase, value) {
         testCase.assert(parseInt(value)==value);
+      }
+    );
+
+    qc.declare(
+      'chooseGenerators',
+      [gen.chooseGenerators(gen.chooseValue(1), gen.chooseValue(2), gen.chooseValue(3), gen.chooseValue(4), gen.chooseValue(5))],
+      function(testCase, value) {
+        // Every generated value is one of the given values.
+        var reduced = value.filter(function(val){ return [1,2,3,4,5].indexOf(val)==-1; });
+        testCase.assert(reduced.length==0);
+        // Every value max only once in there.
+        var once = value.slice(); // Clone the values.
+        for (var i=1; i<6; i++){
+          if (once.indexOf(i)!=-1) once.splice(once.indexOf(i), 1);
+        }
+        testCase.assert(once.length==0);
       }
     );
 

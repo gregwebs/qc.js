@@ -19,6 +19,27 @@ define('generator/base', [
   };
 
   /**
+   * Return at least one of the given generator.
+   */
+  exports.chooseGenerators = function(/** generators... */) {
+    var gens = [].slice.call(arguments);
+    return {
+      func: function (size) {
+        var ret = [];
+        while(ret.length==0){
+          for (var i=0, l=gens.length; i<l; i++){
+            if (Math.random() > 0.5){
+              ret.push(qc.generateValue(gens[i], size));
+            }
+          }
+        }
+        return ret;
+      },
+      shrink: null
+    };
+  };
+
+  /**
    * Generator builder. The created generator will always return the given
    * constant value.
    */
