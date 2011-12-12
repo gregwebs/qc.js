@@ -52,6 +52,7 @@ define('core', [
   };
 
   function filterProps(searchString) {
+    searchString = decodeURIComponent(searchString);
     var ret = [];
     if (!searchString) {
       // No search string given.
