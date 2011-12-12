@@ -133,9 +133,15 @@ var qc = null;
   }
   HtmlListener.prototype = new ConsoleListener();
   function getResultHtml(result){
-    var html = '<b>$result:</b> $groupName: $name --- $passesx Pass, $failsx Fail, $invalidsx Invalids<br/>';
+    var html = '<b>$result:</b> <a href="?$groupFilterUrl">$groupName</a>: <a href="?$filterUrl">[filter]</a> $name --- $passesx Pass, $failsx Fail, $invalidsx Invalids<br/>';
     html = html.replace('$result', result.status.toUpperCase());
     html = html.replace('$groupName', result.groupName);
+    var query = parseQuery();
+    query.searchString = result.groupName;
+    html = html.replace('$groupFilterUrl', getQueryString(query));
+    var query = parseQuery();
+    query.searchString = result.name;
+    html = html.replace('$filterUrl', getQueryString(query));
     html = html.replace('$name', result.name);
     html = html.replace('$passes', result.stats.counts.pass);
     html = html.replace('$fails', result.stats.counts.fail);
@@ -162,18 +168,17 @@ var qc = null;
     this._domNode.innerHTML += 'DONE.';
   };
   function parseQuery(){
-    var link = window.location.href;
     var query = {};
     if (window.location.search){
       var parts = window.location.search.replace(/\?/, '').split('&');
       parts.forEach(function(p){
         var keyValue = p.split('=');
-        query[keyValue[0]] = keyValue[1];
+        query[keyValue[0]] = decodeURIComponent(keyValue[1]);
       });
     }
     return query;
   }
-  function renderFilterHtml(nodeId){
+        function renderFilterHtml(nodeId){
     var node = document.getElementById(nodeId);
     node.appendChild(buildTestLinks());
     node.appendChild(buildMaxPassLinks());
@@ -182,7 +187,7 @@ var qc = null;
   function getQueryString(query){
     var ret = [];
     for (var i in query){
-      ret.push(i + '=' + query[i]);
+      ret.push(i + '=' + encodeURIComponent(query[i]));
     }
     return ret.join('&');
   }
@@ -367,6 +372,7 @@ var qc = null;
     }
   };
   function filterProps(searchString) {
+    searchString = decodeURIComponent(searchString);
     var ret = [];
     if (!searchString) {
             ret = allProps;
@@ -727,10 +733,15 @@ var qc = null;
       }
     };
   };
-  exports.floats = function() {
+  exports.floats = function(digitsAfterComma) {
     return {
       func: function(size) {
-        return random.getFloat(size);
+        var ret = random.getFloat(size);
+        if (digitsAfterComma){
+          var precision = Math.pow(10, digitsAfterComma);
+          ret = parseInt(ret * precision)/precision;
+        }
+        return ret;
       },
       shrink: function (size, x) {
           var tmp, ret = [];
@@ -754,12 +765,13 @@ var qc = null;
       }
     };
   };
-  exports.floatRanges = function(minValue, maxValue) {
+  exports.floatRanges = function(minValue, maxValue, digitsAfterComma) {
     var min = minValue < maxValue ? minValue : maxValue;
     var max = minValue < maxValue ? maxValue : minValue;
     var maxMinusMin = max - min;     return {
       func: function() {
-        return Math.random() * maxMinusMin + min;
+          var ret = Math.random() * maxMinusMin + min;
+        return ret;
       }
     };
   };
