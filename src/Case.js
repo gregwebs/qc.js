@@ -47,7 +47,7 @@ define('Case', function() {
   };
 
   /**
-   * collect builds a histogram of all collected values for all runs of the
+   * Collect builds a histogram of all collected values for all runs of the
    * property.
    *
    * @param value value to collect
@@ -67,10 +67,10 @@ define('Case', function() {
   };
 
   /**
-   * adds the given value to the test case its values for reporting in case of
+   * Adds the given value to the test case its values for reporting in case of
    * failure.
    *
-   * @param value the value to add
+   * @param value The value to add.
    */
   Case.prototype.noteArg = function (value) {
       this.args.push(value);
