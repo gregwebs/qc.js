@@ -29,6 +29,18 @@
       }
     );
 
+    qc.declare("floats with precision 0.1", [gen.floats(1)],
+      function(testCase, value) {
+        testCase.assert(value*10 == parseInt(value*10));
+      }
+    );
+
+    qc.declare("floats with precision 0.01", [gen.floats(2)],
+      function(testCase, value) {
+        testCase.assert(value*100 == parseInt(value*100));
+      }
+    );
+
     qc.declare("integerRanges works at all", [gen.integerRanges(-10, 10)],
       function(testCase, value) {
         testCase.assert(value >= -10 && value <= 10);

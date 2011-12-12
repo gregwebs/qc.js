@@ -65,10 +65,13 @@ define('generator/number', [
    *
    * @constant
    */
-  exports.floats = function() {
+  exports.floats = function(digitsAfterComma) {
     return {
       func: function(size) {
-        return random.getFloat(size);
+        var ret = random.getFloat(size);
+        var precision = Math.pow(10, digitsAfterComma);
+        ret = digitsAfterComma ? (parseInt(ret * precision))/precision : ret;
+        return ret;
       },
       shrink: function (size, x) {
           var tmp, ret = [];
