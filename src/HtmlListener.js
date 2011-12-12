@@ -19,9 +19,15 @@ define('HtmlListener', [
   HtmlListener.prototype = new ConsoleListener();
 
   function getResultHtml(result){
-    var html = '<b>$result:</b> $groupName: $name --- $passesx Pass, $failsx Fail, $invalidsx Invalids<br/>';
+    var html = '<b>$result:</b> <a href="?$groupFilterUrl">$groupName</a>: <a href="?$filterUrl">[filter]</a> $name --- $passesx Pass, $failsx Fail, $invalidsx Invalids<br/>';
     html = html.replace('$result', result.status.toUpperCase());
     html = html.replace('$groupName', result.groupName);
+    var query = parseQuery();
+    query.searchString = result.groupName;
+    html = html.replace('$groupFilterUrl', getQueryString(query));
+    var query = parseQuery();
+    query.searchString = result.name;
+    html = html.replace('$filterUrl', getQueryString(query));
     html = html.replace('$name', result.name);
     html = html.replace('$passes', result.stats.counts.pass);
     html = html.replace('$fails', result.stats.counts.fail);
@@ -50,7 +56,6 @@ define('HtmlListener', [
   };
 
   function parseQuery(){
-    var link = window.location.href;
     var query = {};
     if (window.location.search){
       var parts = window.location.search.replace(/\?/, '').split('&');
@@ -62,10 +67,9 @@ define('HtmlListener', [
     return query;
   }
 
-//<div>Filter the tests</div>
-//<div>max passes: <span id=maxPass></span></div>
-//<hr/>
-
+  //<div>Filter the tests</div>
+  //<div>max passes: <span id=maxPass></span></div>
+  //<hr/>
   function renderFilterHtml(nodeId){
     var node = document.getElementById(nodeId);
     node.appendChild(buildTestLinks());
@@ -76,7 +80,7 @@ define('HtmlListener', [
   function getQueryString(query){
     var ret = [];
     for (var i in query){
-      ret.push(i + '=' + query[i]);
+      ret.push(i + '=' + encodeURIComponent(query[i]));
     }
     return ret.join('&');
   }
