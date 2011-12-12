@@ -61,7 +61,7 @@ define('HtmlListener', [
       var parts = window.location.search.replace(/\?/, '').split('&');
       parts.forEach(function(p){
         var keyValue = p.split('=');
-        query[keyValue[0]] = keyValue[1];
+        query[keyValue[0]] = decodeURIComponent(keyValue[1]);
       });
     }
     return query;
