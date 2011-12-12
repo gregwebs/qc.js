@@ -69,8 +69,10 @@ define('generator/number', [
     return {
       func: function(size) {
         var ret = random.getFloat(size);
-        var precision = Math.pow(10, digitsAfterComma);
-        ret = digitsAfterComma ? (parseInt(ret * precision))/precision : ret;
+        if (digitsAfterComma){
+          var precision = Math.pow(10, digitsAfterComma);
+          ret = parseInt(ret * precision)/precision;
+        }
         return ret;
       },
       shrink: function (size, x) {
@@ -101,13 +103,23 @@ define('generator/number', [
     };
   };
 
-  exports.floatRanges = function(minValue, maxValue) {
+  exports.floatRanges = function(minValue, maxValue, digitsAfterComma) {
     var min = minValue < maxValue ? minValue : maxValue;
     var max = minValue < maxValue ? maxValue : minValue;
     var maxMinusMin = max - min; // Precalculate this here, for a bit of speed.
     return {
       func: function() {
-        return Math.random() * maxMinusMin + min;
+// The porblem here is that if we get smthg like    13.123...14 with precision 1 and the random number is 13.1 its actually smaller than the expected range :( ... gotta think about how to do this right, its really simple, i am sure
+//        if (digitsAfterComma){
+//          var precision = Math.pow(10, digitsAfterComma);
+//          var precisionPlusOne = Math.pow(10, digitsAfterComma+1);
+//          var ret = Math.random() * maxMinusMin * precisionPlusOne;
+//console.log(ret);
+//          ret = parseInt(ret/precision);
+//        } else {
+          var ret = Math.random() * maxMinusMin + min;
+//        }
+        return ret;
       }
     };
   };
