@@ -13,37 +13,34 @@ define('Case', function() {
   }
 
   /**
-   * tests and notifies QuickCheck if a property fails or not.
+   * Tests and notifies QuickCheck if a property fails or not.
    *
    * @param bool pass false, if property failed
    */
   Case.prototype.assert = function (bool) {
-      if (!bool) {
-          throw ('AssertFailed');
-      }
+    if (!bool) {
+      throw ('AssertFailed');
+    }
   };
 
   /**
-   * used to test if input is good for testing the property.
+   * Used to test if input is good for testing the property.
    *
    * @param bool pass false to mark property as invalid for given input.
    */
   Case.prototype.guard = function (bool) {
-      if (!bool) {
-          throw ('InvalidCase');
-      }
+    if (!bool) {
+      throw ('InvalidCase');
+    }
   };
 
   /**
-   * Adds a tag to a test run.
+   * Adds a tag to a test case.
    *
-   * @param bool if true tag is added to case, else not
    * @param tag value to add
    */
-  Case.prototype.classify = function (bool, tag) {
-      if (bool) {
-          this.tags.push(tag);
-      }
+  Case.prototype.addTag = function (tag) {
+    this.tags.push(tag);
   };
 
   /**
@@ -53,17 +50,17 @@ define('Case', function() {
    * @param value value to collect
    */
   Case.prototype.collect = function (value) {
-      var i, found = false;
-      for (i = 0; i < this.collected.length; i++) {
-          if (this.collected[i][1] === value) {
-              this.collected[i][0] += 1;
-              found = true;
-              break;
-          }
+    var found = false;
+    for (var i = 0; i < this.collected.length; i++) {
+      if (this.collected[i][1] === value) {
+        this.collected[i][0] += 1;
+        found = true;
+        break;
       }
-      if (!found) {
-          this.collected.push([1, value]);
-      }
+    }
+    if (!found) {
+      this.collected.push([1, value]);
+    }
   };
 
   /**
@@ -73,7 +70,8 @@ define('Case', function() {
    * @param value The value to add.
    */
   Case.prototype.noteArg = function (value) {
-      this.args.push(value);
+    this.args.push(value);
   };
+  
   return Case;
 });
