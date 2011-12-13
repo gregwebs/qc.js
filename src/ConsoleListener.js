@@ -50,18 +50,14 @@ define('ConsoleListener', function() {
       }
 
       //print histogram statistics if present
-      if (this.maxCollected !== 0 &&
-          result.stats.collected &&
-          result.stats.collected.length > 0) {
+      if (this.maxCollected !== 0 && result.stats.collected.length > 0) {
           distr = result.stats.collected;
           distr = distr.data.slice(
               0, this.maxCollected === -1 ? distr.data.length :
                  Math.min(distr.data.length, this.maxCollected));
-
           distr.sort(function (a, b) {
               return -1 * (a[0] - b[0]);
           });
-
           this.log('collected:');
           for (i = 0; i < distr.length; i++) {
               d = distr[i];
