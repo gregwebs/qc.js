@@ -19,7 +19,7 @@ define('HtmlListener', [
   HtmlListener.prototype = new ConsoleListener();
 
   function getResultHtml(result){
-    var html = '<b>$result:</b> <a href="?$groupFilterUrl">$groupName</a>: <a href="?$filterUrl">[filter]</a> $name --- $passesx Pass, $failsx Fail, $invalidsx Invalids<br/>';
+    var html = '<b>$result:</b> <a href="?$groupFilterUrl">$groupName</a>: <a href="?$filterUrl">$name</a> --- $passesx Pass, $failsx Fail, $invalidsx Invalids<br/>';
     html = html.replace('$result', result.status.toUpperCase());
     html = html.replace('$groupName', result.groupName);
     var query = parseQuery();
@@ -45,7 +45,7 @@ define('HtmlListener', [
   };
   HtmlListener.prototype.failure = function (result) {
     var html = getResultHtml(result) + 'Failed with<pre>$failedCase</pre>';
-    html = html.replace('$failedCase', JSON.stringify(result.failedCase));
+    html = html.replace('$failedCase', JSON.stringify(result.failedCase, null, 4));
     this._domNode.innerHTML += html;
   };
   HtmlListener.prototype.log = function (str) {
