@@ -6,35 +6,33 @@ var qc = null;
       this.args = args;
   }
   Case.prototype.assert = function (bool) {
-      if (!bool) {
-          throw ('AssertFailed');
-      }
+    if (!bool) {
+      throw ('AssertFailed');
+    }
   };
   Case.prototype.guard = function (bool) {
-      if (!bool) {
-          throw ('InvalidCase');
-      }
+    if (!bool) {
+      throw ('InvalidCase');
+    }
   };
-  Case.prototype.classify = function (bool, tag) {
-      if (bool) {
-          this.tags.push(tag);
-      }
+  Case.prototype.addTag = function (tag) {
+    this.tags.push(tag);
   };
   Case.prototype.collect = function (value) {
-      var i, found = false;
-      for (i = 0; i < this.collected.length; i++) {
-          if (this.collected[i][1] === value) {
-              this.collected[i][0] += 1;
-              found = true;
-              break;
-          }
+    var found = false;
+    for (var i = 0; i < this.collected.length; i++) {
+      if (this.collected[i][1] === value) {
+        this.collected[i][0] += 1;
+        found = true;
+        break;
       }
-      if (!found) {
-          this.collected.push([1, value]);
-      }
+    }
+    if (!found) {
+      this.collected.push([1, value]);
+    }
   };
   Case.prototype.noteArg = function (value) {
-      this.args.push(value);
+    this.args.push(value);
   };
   return Case;
 })();
@@ -51,7 +49,7 @@ var qc = null;
       var self = this;
       parts.forEach(function(p){
         var keyValue = p.split('=');
-        if (typeof self[keyValue[0]] != 'undefined') self[keyValue[0]] = keyValue[1];
+        if (typeof self[keyValue[0]] != 'undefined') self[keyValue[0]] = decodeURIComponent(keyValue[1]);
       });
     }
   }
@@ -87,9 +85,7 @@ var qc = null;
               }
           }
       }
-            if (this.maxCollected !== 0 &&
-          result.stats.collected &&
-          result.stats.collected.length > 0) {
+            if (this.maxCollected !== 0 && result.stats.collected.length > 0) {
           distr = result.stats.collected;
           distr = distr.data.slice(
               0, this.maxCollected === -1 ? distr.data.length :
@@ -133,7 +129,7 @@ var qc = null;
   }
   HtmlListener.prototype = new ConsoleListener();
   function getResultHtml(result){
-    var html = '<b>$result:</b> <a href="?$groupFilterUrl">$groupName</a>: <a href="?$filterUrl">[filter]</a> $name --- $passesx Pass, $failsx Fail, $invalidsx Invalids<br/>';
+    var html = '<b>$result:</b> <a href="?$groupFilterUrl">$groupName</a>: <a href="?$filterUrl">$name</a> --- $passesx Pass, $failsx Fail, $invalidsx Invalids<br/>';
     html = html.replace('$result', result.status.toUpperCase());
     html = html.replace('$groupName', result.groupName);
     var query = parseQuery();
@@ -158,7 +154,7 @@ var qc = null;
   };
   HtmlListener.prototype.failure = function (result) {
     var html = getResultHtml(result) + 'Failed with<pre>$failedCase</pre>';
-    html = html.replace('$failedCase', JSON.stringify(result.failedCase));
+    html = html.replace('$failedCase', JSON.stringify(result.failedCase, null, 4));
     this._domNode.innerHTML += html;
   };
   HtmlListener.prototype.log = function (str) {
@@ -350,7 +346,7 @@ var qc = null;
   };
   exports.runProps = function(config, listener) {
     var once, i = 0;
-    listener = typeof listener == 'undefined' ? new ConsoleListener() : listener;
+    listener = listener || new ConsoleListener();
     var propsToRun = filterProps(config.searchString);
     if (typeof setTimeout !== 'undefined') {
             once = function () {
@@ -372,7 +368,6 @@ var qc = null;
     }
   };
   function filterProps(searchString) {
-    searchString = decodeURIComponent(searchString);
     var ret = [];
     if (!searchString) {
             ret = allProps;
@@ -891,7 +886,7 @@ var qc = null;
       return shrunkArgs;
   };
   Prop.prototype.run = function (config) {
-    var args, testCase, dist, shrunkArgs;
+    var args, testCase, shrunkArgs;
     var stats = new Stats(), size = 0, collected = [];
     while (config.needsWork(stats.counts.pass, stats.counts.invalid)) {
       args = this.generateArgs(size);
@@ -903,8 +898,7 @@ var qc = null;
       catch (e) {
         if (e === 'AssertFailed') {
           stats.addFail(args);
-          dist = !testCase.collected ||
-            testCase.collected.length === 0 ?  null : new Distribution(testCase.collected);
+          var dist = testCase.collected.length === 0 ?  null : new Distribution(testCase.collected);
           shrunkArgs = this._shrinkLoop(config, size, args, stats);
           return new Fail(this, stats, args, shrunkArgs, testCase.tags, dist);
         } else if (e === 'InvalidCase') {
@@ -917,8 +911,7 @@ var qc = null;
       stats.addTags(testCase.tags);
       collected = collected.concat(testCase.collected);
     }
-    stats.collected = !collected ||
-      collected.length === 0 ? null : new Distribution(collected);
+    stats.collected = collected.length === 0 ? null : new Distribution(collected);
     return stats.newResult(this);
   };
   Prop.prototype._shrinkLoop = function(config, size, args, stats) {
