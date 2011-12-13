@@ -26,7 +26,7 @@ define('core', [
    */
   exports.runProps = function(config, listener) {
     var once, i = 0;
-    listener = typeof listener == 'undefined' ? new ConsoleListener() : listener;
+    listener = listener || new ConsoleListener();
 
     var propsToRun = filterProps(config.searchString);
 
@@ -52,7 +52,6 @@ define('core', [
   };
 
   function filterProps(searchString) {
-    searchString = decodeURIComponent(searchString);
     var ret = [];
     if (!searchString) {
       // No search string given.

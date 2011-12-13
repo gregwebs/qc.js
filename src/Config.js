@@ -28,7 +28,7 @@ define('Config', function() {
       var self = this;
       parts.forEach(function(p){
         var keyValue = p.split('=');
-        if (typeof self[keyValue[0]] != 'undefined') self[keyValue[0]] = keyValue[1];
+        if (typeof self[keyValue[0]] != 'undefined') self[keyValue[0]] = decodeURIComponent(keyValue[1]);
       });
     }
   }
