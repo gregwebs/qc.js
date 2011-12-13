@@ -117,7 +117,7 @@ define('Prop', [
    * @return depending on test result a Pass, Fail or Invalid object
    */
   Prop.prototype.run = function (config) {
-    var args, testCase, dist, shrunkArgs;
+    var args, testCase, shrunkArgs;
     var stats = new Stats(), size = 0, collected = [];
 
     while (config.needsWork(stats.counts.pass, stats.counts.invalid)) {
@@ -130,8 +130,7 @@ define('Prop', [
       catch (e) {
         if (e === 'AssertFailed') {
           stats.addFail(args);
-          dist = !testCase.collected ||
-            testCase.collected.length === 0 ?  null : new Distribution(testCase.collected);
+          var dist = testCase.collected.length === 0 ?  null : new Distribution(testCase.collected);
           shrunkArgs = this._shrinkLoop(config, size, args, stats);
           return new Fail(this, stats, args, shrunkArgs, testCase.tags, dist);
         } else if (e === 'InvalidCase') {
@@ -144,8 +143,7 @@ define('Prop', [
       stats.addTags(testCase.tags);
       collected = collected.concat(testCase.collected);
     }
-    stats.collected = !collected ||
-      collected.length === 0 ? null : new Distribution(collected);
+    stats.collected = collected.length === 0 ? null : new Distribution(collected);
     return stats.newResult(this);
   };
 
